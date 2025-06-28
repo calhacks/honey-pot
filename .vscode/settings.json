@@ -1,0 +1,4 @@
+{
+    "biome.requireConfiguration": true,
+	"oxc.enable": true
+}

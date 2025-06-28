@@ -23,20 +23,20 @@ pnpm install
 ### Environment Variables
 
 ```bash
-vercel link
+pnpx vercel link
 # ? Set up “~/Personal/calhacks/honey-pot”? (Y/n)
 Y
 # ? Which scope should contain your project? (Use arrow keys)
 ❯ Hackathons at Berkeley
 # ? Found project “hackathons-at-berkeley/honey-pot”. Link to it? (Y/n)
 Y
-vercel env pull .env.development.local
+pnpx vercel env pull .env.development.local
 ```
 
 ### Supabase
 
 ```bash
-supabase login
+pnpx supabase login
 pnpm gen:supabase # generate database schemas to local types
 ```
 
@@ -45,6 +45,18 @@ pnpm gen:supabase # generate database schemas to local types
 ```bash
 pnpm dev
 ```
+
+## Tooling
+
+### Linter
+
+`honey-pot` uses [oxlint](https://oxc.rs/docs/guide/usage/linter.html) for linting (`pnpm lint`, `pnpm lint:fix`). Your development experience will heavily benefit from Oxidation Compiler's tooling. Oxc's tooling support [is found here](https://oxc.rs/docs/guide/usage/linter.html#vscode-extension).
+
+### Formatting
+
+`honey-pot` uses [Biome](https://biomejs.dev/) for formatting (`pnpm fmt`, `pnpm fmt:fix`). Your development experience will heavily benefit from Biome's tooling. Biome's tooling support [is found here](https://biomejs.dev/guides/getting-started/#editor-integrations).
+
+We will (probably) migrate to [Oxc Formatter](https://github.com/oxc-project/oxc/tree/main/crates/oxc_formatter) once stable!
 
 ## Contributing
 

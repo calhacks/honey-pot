@@ -1,0 +1,14 @@
+{
+	"plugins": [
+		"typescript",
+		"unicorn",
+		"react",
+		"react-perf",
+		"nextjs",
+		"oxc",
+		"import",
+		"jsx-a11y",
+		"node",
+		"promise"
+	]
+}
