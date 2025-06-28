@@ -9,6 +9,7 @@ on:
 
 jobs:
   preview:
+    if: github.actor != 'taeyangcode'
     runs-on: ubuntu-latest
 
     steps:
