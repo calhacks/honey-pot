@@ -14,25 +14,29 @@
         "gen:supabase": "pnpx supabase gen types --lang=typescript --project-id=xyjjpwufeehopwdiqphr --schema=public >  src/lib/supabase/database.types.ts && pnpm exec biome format src/lib/supabase/database.types.ts --write"
     },
     "dependencies": {
+        "@effect/platform": "^0.88.2",
+        "@effect/rpc": "^0.65.2",
         "@supabase/ssr": "^0.6.1",
-        "@supabase/supabase-js": "^2.50.2",
+        "@supabase/supabase-js": "^2.52.0",
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
+        "dotenv": "^17.2.0",
+        "effect": "^3.16.16",
         "lucide-react": "^0.525.0",
-        "next": "15.3.4",
-        "react": "^19.0.0",
-        "react-dom": "^19.0.0",
+        "next": "15.4.2",
+        "react": "^19.1.0",
+        "react-dom": "^19.1.0",
         "tailwind-merge": "^3.3.1"
     },
     "devDependencies": {
-        "@biomejs/biome": "^2.0.6",
-        "@tailwindcss/postcss": "^4",
-        "@types/node": "^20",
-        "@types/react": "^19",
-        "@types/react-dom": "^19",
-        "oxlint": "^1.3.0",
-        "tailwindcss": "^4",
-        "tw-animate-css": "^1.3.4",
-        "typescript": "^5"
+        "@biomejs/biome": "^2.1.2",
+        "@tailwindcss/postcss": "^4.1.11",
+        "@types/node": "^24.0.15",
+        "@types/react": "^19.1.8",
+        "@types/react-dom": "^19.1.6",
+        "oxlint": "^1.7.0",
+        "tailwindcss": "^4.1.11",
+        "tw-animate-css": "^1.3.5",
+        "typescript": "^5.8.3"
     }
 }
