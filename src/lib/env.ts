@@ -5,42 +5,42 @@ export class Env extends Effect.Service<Env>()("@honey-pot/lib/env/Env", {
     effect: Effect.gen(function* () {
         yield* Effect.try(() => PlatformConfigProvider.layerDotEnvAdd(".env.local"));
 
-        const nextPublicSupabaseAnonKey = yield* Config.redacted(NextPublicSupabaseAnonKey);
-        const nextPublicSupabaseUrl = yield* Config.redacted(NextPublicSupabaseUrl);
-        const postgresDatabase = yield* Config.redacted(PostgresDatabase);
-        const postgresHost = yield* Config.redacted(PostgresHost);
-        const postgresPassword = yield* Config.redacted(PostgresPassword);
-        const postgresPrismaUrl = yield* Config.redacted(PostgresPrismaUrl);
-        const postgresUrl = yield* Config.redacted(PostgresUrl);
-        const postgresUrlNonPooling = yield* Config.redacted(PostgresUrlNonPooling);
-        const postgresUser = yield* Config.redacted(PostgresUser);
-        const supabaseAnonKey = yield* Config.redacted(SupabaseAnonKey);
-        const supabaseJwtSecret = yield* Config.redacted(SupabaseJwtSecret);
-        const supabasePublishableDefaultKey = yield* Config.redacted(SupabasePublishableDefaultKey);
-        const supabaseSecretDefaultKey = yield* Config.redacted(SupabaseSecretDefaultKey);
-        const supabaseServiceRoleKey = yield* Config.redacted(SupabaseServiceRoleKey);
-        const supabaseUrl = yield* Config.redacted(SupabaseUrl);
-        const vercelOidcToken = yield* Config.redacted(VercelOidcToken);
-        const nextPublicHost = yield* Config.redacted(NextPublicHost);
+        // const nextPublicSupabaseAnonKey = yield* Config.redacted(NextPublicSupabaseAnonKey);
+        // const nextPublicSupabaseUrl = yield* Config.redacted(NextPublicSupabaseUrl);
+        // const postgresDatabase = yield* Config.redacted(PostgresDatabase);
+        // const postgresHost = yield* Config.redacted(PostgresHost);
+        // const postgresPassword = yield* Config.redacted(PostgresPassword);
+        // const postgresPrismaUrl = yield* Config.redacted(PostgresPrismaUrl);
+        // const postgresUrl = yield* Config.redacted(PostgresUrl);
+        // const postgresUrlNonPooling = yield* Config.redacted(PostgresUrlNonPooling);
+        // const postgresUser = yield* Config.redacted(PostgresUser);
+        // const supabaseAnonKey = yield* Config.redacted(SupabaseAnonKey);
+        // const supabaseJwtSecret = yield* Config.redacted(SupabaseJwtSecret);
+        // const supabasePublishableDefaultKey = yield* Config.redacted(SupabasePublishableDefaultKey);
+        // const supabaseSecretDefaultKey = yield* Config.redacted(SupabaseSecretDefaultKey);
+        // const supabaseServiceRoleKey = yield* Config.redacted(SupabaseServiceRoleKey);
+        // const supabaseUrl = yield* Config.redacted(SupabaseUrl);
+        // const vercelOidcToken = yield* Config.redacted(VercelOidcToken);
+        const nextPublicHost = yield* NextPublicHost;
 
         return yield* Effect.succeed({
-            nextPublicSupabaseAnonKey,
-            nextPublicSupabaseUrl,
-            postgresDatabase,
-            postgresHost,
-            postgresPassword,
-            postgresPrismaUrl,
-            postgresUrl,
-            postgresUrlNonPooling,
-            postgresUser,
-            supabaseAnonKey,
-            supabaseJwtSecret,
-            supabasePublishableDefaultKey,
-            supabaseSecretDefaultKey,
-            supabaseServiceRoleKey,
-            supabaseUrl,
-            vercelOidcToken,
-            nextPublicHost,
+            // nextPublicSupabaseAnonKey,
+            // nextPublicSupabaseUrl,
+            // postgresDatabase,
+            // postgresHost,
+            // postgresPassword,
+            // postgresPrismaUrl,
+            // postgresUrl,
+            // postgresUrlNonPooling,
+            // postgresUser,
+            // supabaseAnonKey,
+            // supabaseJwtSecret,
+            // supabasePublishableDefaultKey,
+            // supabaseSecretDefaultKey,
+            // supabaseServiceRoleKey,
+            // supabaseUrl,
+            // vercelOidcToken,
+            nextPublicHost: `${nextPublicHost}/api/rpc`,
         });
     }).pipe(Effect.withSpan("@honey-pot/env")),
 }) { }
