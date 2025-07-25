@@ -2,11 +2,11 @@ import { Effect } from "effect";
 import { ProfileRpcs } from "@/schema/rpc";
 
 export const ProfileProcedures = ProfileRpcs.toLayer({
-    "@honey-pot/schema/rpc/ProfileRpcs/GetAllProfiles": (request) => Effect.gen(function* () {
+    GetAllProfiles: (request) => Effect.gen(function* () {
         return yield* Effect.succeed([]);
     }),
 
-    "@honey-pot/schema/rpc/ProfileRpcs/GetProfileById": (request) => Effect.gen(function* () {
+    GetProfileById: (request) => Effect.gen(function* () {
         return yield* Effect.succeed({
             id: "1",
             user_id: "1",
@@ -17,7 +17,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
         });
     }),
 
-    "@honey-pot/schema/rpc/ProfileRpcs/InsertProfile": (request) => Effect.gen(function* () {
+    InsertProfile: (request) => Effect.gen(function* () {
         return yield* Effect.succeed({
             id: "1",
             user_id: "1",
@@ -28,7 +28,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
         });
     }),
 
-    "@honey-pot/schema/rpc/ProfileRpcs/UpdateProfile": (request) => Effect.gen(function* () {
+    UpdateProfile: (request) => Effect.gen(function* () {
         return yield* Effect.succeed({
             id: "1",
             user_id: "1",
@@ -39,7 +39,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
         });
     }),
 
-    "@honey-pot/schema/rpc/ProfileRpcs/DeleteProfile": (request) => Effect.gen(function* () {
+    DeleteProfile: (request) => Effect.gen(function* () {
         return yield* Effect.succeed([]);
     }),
 });

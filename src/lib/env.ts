@@ -3,7 +3,7 @@ import { Config, Effect, Schema as S } from "effect";
 
 export class Env extends Effect.Service<Env>()("@honey-pot/lib/env/Env", {
     effect: Effect.gen(function* () {
-        yield* Effect.try(() => PlatformConfigProvider.layerDotEnvAdd(".env.development.local"));
+        yield* Effect.try(() => PlatformConfigProvider.layerDotEnvAdd(".env.local"));
 
         const nextPublicSupabaseAnonKey = yield* Config.redacted(NextPublicSupabaseAnonKey);
         const nextPublicSupabaseUrl = yield* Config.redacted(NextPublicSupabaseUrl);
@@ -45,26 +45,26 @@ export class Env extends Effect.Service<Env>()("@honey-pot/lib/env/Env", {
     }).pipe(Effect.withSpan("@honey-pot/env")),
 }) { }
 
-export const NextPublicSupabaseAnonKey = S.Config("@honey-pot/lib/env/NextPublicSupabaseAnonKey", S.NonEmptyString)
-export const NextPublicSupabaseUrl = S.Config("@honey-pot/lib/env/NextPublicSupabaseUrl", S.NonEmptyString)
-export const PostgresDatabase = S.Config("@honey-pot/lib/env/PostgresDatabase", S.NonEmptyString)
-export const PostgresHost = S.Config("@honey-pot/lib/env/PostgresHost", S.NonEmptyString)
-export const PostgresPassword = S.Config("@honey-pot/lib/env/PostgresPassword", S.NonEmptyString)
-export const PostgresPrismaUrl = S.Config("@honey-pot/lib/env/PostgresPrismaUrl", S.NonEmptyString)
-export const PostgresUrl = S.Config("@honey-pot/lib/env/PostgresUrl", S.NonEmptyString)
-export const PostgresUrlNonPooling = S.Config("@honey-pot/lib/env/PostgresUrlNonPooling", S.NonEmptyString)
-export const PostgresUser = S.Config("@honey-pot/lib/env/PostgresUser", S.NonEmptyString)
-export const SupabaseAnonKey = S.Config("@honey-pot/lib/env/SupabaseAnonKey", S.NonEmptyString)
-export const SupabaseJwtSecret = S.Config("@honey-pot/lib/env/SupabaseJwtSecret", S.NonEmptyString)
+export const NextPublicSupabaseAnonKey = S.Config("NEXT_PUBLIC_SUPABASE_ANON_KEY", S.NonEmptyString)
+export const NextPublicSupabaseUrl = S.Config("NEXT_PUBLIC_SUPABASE_URL", S.NonEmptyString)
+export const PostgresDatabase = S.Config("POSTGRES_DATABASE", S.NonEmptyString)
+export const PostgresHost = S.Config("POSTGRES_HOST", S.NonEmptyString)
+export const PostgresPassword = S.Config("POSTGRES_PASSWORD", S.NonEmptyString)
+export const PostgresPrismaUrl = S.Config("POSTGRES_PRISMA_URL", S.NonEmptyString)
+export const PostgresUrl = S.Config("POSTGRES_URL", S.NonEmptyString)
+export const PostgresUrlNonPooling = S.Config("POSTGRES_URL_NON_POOLING", S.NonEmptyString)
+export const PostgresUser = S.Config("POSTGRES_USER", S.NonEmptyString)
+export const SupabaseAnonKey = S.Config("SUPABASE_ANON_KEY", S.NonEmptyString)
+export const SupabaseJwtSecret = S.Config("SUPABASE_JWT_SECRET", S.NonEmptyString)
 export const SupabasePublishableDefaultKey = S.Config(
-    "@honey-pot/lib/env/SupabasePublishableDefaultKey",
+    "SUPABASE_PUBLISHABLE_DEFAULT_KEY",
     S.NonEmptyString,
 )
-export const SupabaseSecretDefaultKey = S.Config("@honey-pot/lib/env/SupabaseSecretDefaultKey", S.NonEmptyString)
-export const SupabaseServiceRoleKey = S.Config("@honey-pot/lib/env/SupabaseServiceRoleKey", S.NonEmptyString)
-export const SupabaseUrl = S.Config("@honey-pot/lib/env/SupabaseUrl", S.NonEmptyString)
-export const VercelOidcToken = S.Config("@honey-pot/lib/env/VercelOidcToken", S.NonEmptyString)
+export const SupabaseSecretDefaultKey = S.Config("SUPABASE_SECRET_DEFAULT_KEY", S.NonEmptyString)
+export const SupabaseServiceRoleKey = S.Config("SUPABASE_SERVICE_ROLE_KEY", S.NonEmptyString)
+export const SupabaseUrl = S.Config("SUPABASE_URL", S.NonEmptyString)
+export const VercelOidcToken = S.Config("VERCEL_OIDC_TOKEN", S.NonEmptyString)
 
-export const NextPublicHost = S.Config("@honey-pot/lib/env/NextPublicHost", S.NonEmptyString).pipe(
+export const NextPublicHost = S.Config("NEXT_PUBLIC_HOST", S.NonEmptyString).pipe(
     Config.orElse(() => Config.succeed("http://localhost:3000")),
 )

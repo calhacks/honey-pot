@@ -6,7 +6,7 @@ export namespace Profile {
         user_id: S.UUID,
         created_at: S.Date,
         updated_at: S.Date,
-        role: Enums.Role,
+        role: S.Literal("admin", "team", "staff", "hacker"),
         avatar_url: S.NullOr(S.String),
     });
 
