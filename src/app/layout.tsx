@@ -1,5 +1,7 @@
+import { Effect } from "effect";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { Live, Rpc } from "@/rpc/client";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,7 +19,7 @@ export const metadata: Metadata = {
     description: "🍯",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
@@ -30,3 +32,12 @@ export default function RootLayout({
         </html>
     );
 }
+
+const useGetAllProfiles = Effect.gen(function* () {
+    const rpc = yield* Rpc;
+    const response = yield* rpc["@honey-pot/schema/rpc/ProfileRpcs/GetAllProfiles"].call(
+        {},
+        {}
+    );
+    return response;
+}).pipe(Effect.scoped);
