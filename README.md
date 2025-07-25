@@ -30,7 +30,7 @@ Y
 ❯ Hackathons at Berkeley
 # ? Found project “hackathons-at-berkeley/honey-pot”. Link to it? (Y/n)
 Y
-pnpx vercel env pull .env.development.local
+pnpx vercel env pull .env.local
 ```
 
 ### Supabase
