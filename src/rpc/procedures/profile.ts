@@ -8,8 +8,8 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 	GetAllProfiles: () =>
 		Effect.gen(function* () {
 			const supabase = yield* SupabaseServerClient;
-
 			const query = supabase.from("profiles").select("*", { count: "exact" });
+
 			return yield* Effect.tryPromise(() => query).pipe(
 				Effect.flatMap(transformRawResultToEffect),
 				Effect.flatMap((result) => S.decodeUnknown(S.Array(Profile.Profile))(result.data)),
@@ -24,8 +24,8 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 	GetProfileById: (request) =>
 		Effect.gen(function* () {
 			const supabase = yield* SupabaseServerClient;
+			const query = supabase.from("profiles").select("*").eq("id", request.id).single();
 
-			const query = supabase.from("profiles").select("*").eq("id", request.id);
 			return yield* Effect.tryPromise(() => query).pipe(
 				Effect.flatMap(transformRawResultToEffect),
 				Effect.flatMap((result) => S.decodeUnknown(Profile.Profile)(result.data)),
