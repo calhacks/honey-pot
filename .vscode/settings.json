@@ -1,4 +1,7 @@
 {
-    "biome.requireConfiguration": true,
-	"oxc.enable": true
+	"biome.requireConfiguration": true,
+	"oxc.enable": true,
+	"editor.codeActionsOnSave": {
+		"source.organizeImports.biome": "always"
+	}
 }

@@ -1,47 +1,54 @@
 import { Schema as S } from "effect";
 
 export namespace Profile {
-    export const Table = S.Struct({
-        id: S.UUID,
-        user_id: S.UUID,
-        created_at: S.Date,
-        updated_at: S.Date,
-        role: S.Literal("admin", "team", "staff", "hacker"),
-        avatar_url: S.NullOr(S.String),
-    });
+	export const Profile = S.Struct({
+		id: S.UUID,
+		user_id: S.UUID,
+		created_at: S.Date,
+		updated_at: S.Date,
+		role: S.Literal("admin", "team", "staff", "hacker"),
+		avatar_url: S.NullOr(S.String),
+	});
 
-    export type Profile = S.Schema.Type<typeof Table>;
+	export const Serialize = S.Struct({
+		...Profile.fields,
+		created_at: S.String,
+		updated_at: S.String,
+	});
+
+	export type Profile = S.Schema.Type<typeof Profile>;
+	export type ProfileSerialize = S.Schema.Type<typeof Serialize>;
 }
 
 export namespace Event {
-    export const Table = S.Struct({
-        id: S.UUID,
-        title: S.String,
-        description: S.NullOr(S.String),
-        created_at: S.Date,
-        created_by: S.UUID,
-        updated_at: S.Date,
-        starts_at: S.NullOr(S.Date),
-        ends_at: S.NullOr(S.Date),
-        dashboard_slug: S.String,
-        landing_page_absolute_url: S.NullOr(S.String),
-        live_site_absolute_url: S.NullOr(S.String),
-    });
+	export const Table = S.Struct({
+		id: S.UUID,
+		title: S.String,
+		description: S.NullOr(S.String),
+		created_at: S.Date,
+		created_by: S.UUID,
+		updated_at: S.Date,
+		starts_at: S.NullOr(S.Date),
+		ends_at: S.NullOr(S.Date),
+		dashboard_slug: S.String,
+		landing_page_absolute_url: S.NullOr(S.String),
+		live_site_absolute_url: S.NullOr(S.String),
+	});
 
-    export type Event = S.Schema.Type<typeof Table>;
+	export type Event = S.Schema.Type<typeof Table>;
 }
 
 export namespace ProfileEventAccess {
-    export const Table = S.Struct({
-        profile_id: S.UUID,
-        event_id: S.UUID,
-        granted_at: S.Date,
-        granted_by: S.UUID,
-    });
+	export const Table = S.Struct({
+		profile_id: S.UUID,
+		event_id: S.UUID,
+		granted_at: S.Date,
+		granted_by: S.UUID,
+	});
 
-    export type ProfileEventAccess = S.Schema.Type<typeof Table>;
+	export type ProfileEventAccess = S.Schema.Type<typeof Table>;
 }
 
 export namespace Enums {
-    export const Role = S.Literal("admin", "team", "staff", "hacker");
+	export const Role = S.Literal("admin", "team", "staff", "hacker");
 }

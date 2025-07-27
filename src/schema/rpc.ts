@@ -15,47 +15,52 @@ import { Schema as S } from "effect";
 import { Profile } from "@/schema/supabase";
 
 export class ProfileRpcs extends RpcGroup.make(
-    Rpc.make("GetAllProfiles", {
-        success: S.Array(Profile.Table),
-        // TODO: proper failure types
-        error: S.Unknown,
-        payload: {},
-    }),
+	Rpc.make("GetAllProfiles", {
+		success: S.Array(Profile.Profile),
+		// TODO: proper failure types
+		error: S.Unknown,
+		payload: {},
+	}),
 
-    Rpc.make("GetProfileById", {
-        success: Profile.Table,
-        // TODO: proper failure types
-        error: S.Unknown,
-        payload: {
-            id: Profile.Table.fields.id,
-        },
-    }),
+	Rpc.make("GetProfileById", {
+		success: Profile.Profile,
+		// TODO: proper failure types
+		error: S.Unknown,
+		payload: {
+			id: Profile.Profile.fields.id,
+		},
+	}),
 
-    Rpc.make("InsertProfile", {
-        success: Profile.Table,
-        // TODO: proper failure types
-        error: S.Unknown,
-        payload: {
-            ...Profile.Table.fields,
-        },
-    }),
+	Rpc.make("InsertProfile", {
+		success: Profile.Profile,
+		// TODO: proper failure types
+		error: S.Unknown,
+		payload: {
+			id: Profile.Profile.fields.id,
+			user_id: Profile.Profile.fields.user_id,
+			created_at: Profile.Profile.fields.created_at,
+			updated_at: Profile.Profile.fields.updated_at,
+			role: Profile.Profile.fields.role,
+			avatar_url: Profile.Profile.fields.avatar_url,
+		},
+	}),
 
-    Rpc.make("UpdateProfile", {
-        success: Profile.Table,
-        // TODO: proper failure types
-        error: S.Unknown,
-        payload: {
-            role: S.optional(Profile.Table.fields.role),
-            avatar_url: S.NullishOr(Profile.Table.fields.avatar_url),
-        },
-    }),
+	Rpc.make("UpdateProfile", {
+		success: Profile.Profile,
+		// TODO: proper failure types
+		error: S.Unknown,
+		payload: {
+			role: S.optional(Profile.Profile.fields.role),
+			avatar_url: S.NullishOr(Profile.Profile.fields.avatar_url),
+		},
+	}),
 
-    Rpc.make("DeleteProfile", {
-        success: S.Void,
-        // TODO: proper failure types
-        error: S.Unknown,
-        payload: {
-            id: Profile.Table.fields.id,
-        },
-    }),
-) { }
+	Rpc.make("DeleteProfile", {
+		success: S.Void,
+		// TODO: proper failure types
+		error: S.Unknown,
+		payload: {
+			id: Profile.Profile.fields.id,
+		},
+	}),
+) {}
