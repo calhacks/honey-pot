@@ -1,45 +1,91 @@
-import { Effect } from "effect";
+import { Effect, Schema as S } from "effect";
+import { SupabaseServerClient } from "@/lib/supabase/client";
+import { transformRawResultToEffect } from "@/lib/utils/supabase";
 import { ProfileRpcs } from "@/schema/rpc";
+import { Profile } from "@/schema/supabase";
 
 export const ProfileProcedures = ProfileRpcs.toLayer({
-    GetAllProfiles: (request) => Effect.gen(function* () {
-        return yield* Effect.succeed([]);
-    }).pipe(Effect.withSpan("@honey-pot/rpc/procedures/GetAllProfiles")),
+	GetAllProfiles: () =>
+		Effect.gen(function* () {
+			const supabase = yield* SupabaseServerClient;
 
-    GetProfileById: (request) => Effect.gen(function* () {
-        return yield* Effect.succeed({
-            id: "1",
-            user_id: "1",
-            created_at: new Date(),
-            updated_at: new Date(),
-            role: "admin" as const,
-            avatar_url: null,
-        });
-    }).pipe(Effect.withSpan("@honey-pot/rpc/procedures/GetProfileById")),
+			const query = supabase.from("profiles").select("*", { count: "exact" });
+			return yield* Effect.tryPromise(() => query).pipe(
+				Effect.flatMap(transformRawResultToEffect),
+				Effect.flatMap((result) => S.decodeUnknown(S.Array(Profile.Profile))(result.data)),
+			);
+		}).pipe(
+			Effect.provide(SupabaseServerClient.Default),
+			Effect.tapError(Effect.logError),
+			Effect.tapDefect(Effect.logError),
+			Effect.withSpan("@honey-pot/rpc/procedures/GetAllProfiles"),
+		),
 
-    InsertProfile: (request) => Effect.gen(function* () {
-        return yield* Effect.succeed({
-            id: "1",
-            user_id: "1",
-            created_at: new Date(),
-            updated_at: new Date(),
-            role: "admin" as const,
-            avatar_url: null,
-        });
-    }).pipe(Effect.withSpan("@honey-pot/rpc/procedures/InsertProfile")),
+	GetProfileById: (request) =>
+		Effect.gen(function* () {
+			const supabase = yield* SupabaseServerClient;
 
-    UpdateProfile: (request) => Effect.gen(function* () {
-        return yield* Effect.succeed({
-            id: "1",
-            user_id: "1",
-            created_at: new Date(),
-            updated_at: new Date(),
-            role: "admin" as const,
-            avatar_url: null,
-        });
-    }).pipe(Effect.withSpan("@honey-pot/rpc/procedures/UpdateProfile")),
+			const query = supabase.from("profiles").select("*").eq("id", request.id);
+			return yield* Effect.tryPromise(() => query).pipe(
+				Effect.flatMap(transformRawResultToEffect),
+				Effect.flatMap((result) => S.decodeUnknown(Profile.Profile)(result.data)),
+			);
+		}).pipe(
+			Effect.provide(SupabaseServerClient.Default),
+			Effect.tapError(Effect.logError),
+			Effect.tapDefect(Effect.logError),
+			Effect.withSpan("@honey-pot/rpc/procedures/GetProfileById"),
+		),
 
-    DeleteProfile: (request) => Effect.gen(function* () {
-        return yield* Effect.succeed([]);
-    }).pipe(Effect.withSpan("@honey-pot/rpc/procedures/DeleteProfile")),
+	InsertProfile: (request) =>
+		Effect.gen(function* () {
+			const supabase = yield* SupabaseServerClient;
+			const serialized = S.decodeUnknown(Profile.Serialize)(request);
+
+			return yield* serialized.pipe(
+				Effect.flatMap((request) => Effect.tryPromise(() => supabase.from("profiles").insert(request))),
+				Effect.flatMap(transformRawResultToEffect),
+				Effect.flatMap((result) => S.decodeUnknown(Profile.Profile)(result.data)),
+			);
+		}).pipe(
+			Effect.provide(SupabaseServerClient.Default),
+			Effect.tapError(Effect.logError),
+			Effect.tapDefect(Effect.logError),
+			Effect.withSpan("@honey-pot/rpc/procedures/InsertProfile"),
+		),
+
+	UpdateProfile: (request) =>
+		Effect.gen(function* () {
+			const supabase = yield* SupabaseServerClient;
+			const serialized = S.decodeUnknown(Profile.Serialize)(request);
+
+			return yield* serialized.pipe(
+				Effect.flatMap((request) => Effect.tryPromise(() => supabase.from("profiles").update(request))),
+				Effect.flatMap(transformRawResultToEffect),
+				Effect.flatMap((result) => S.decodeUnknown(Profile.Profile)(result.data)),
+			);
+		}).pipe(
+			Effect.provide(SupabaseServerClient.Default),
+			Effect.tapError(Effect.logError),
+			Effect.tapDefect(Effect.logError),
+			Effect.withSpan("@honey-pot/rpc/procedures/UpdateProfile"),
+		),
+
+	DeleteProfile: (request) =>
+		Effect.gen(function* () {
+			const supabase = yield* SupabaseServerClient;
+			const serialized = S.decodeUnknown(Profile.Serialize)(request);
+
+			return yield* serialized.pipe(
+				Effect.flatMap((request) =>
+					Effect.tryPromise(() => supabase.from("profiles").delete().eq("id", request.id)),
+				),
+				Effect.asVoid,
+			);
+		}).pipe(
+			Effect.provide(SupabaseServerClient.Default),
+			Effect.tapError(Effect.logError),
+			Effect.tapDefect(Effect.logError),
+			Effect.withSpan("@honey-pot/rpc/procedures/DeleteProfile"),
+		),
 });
