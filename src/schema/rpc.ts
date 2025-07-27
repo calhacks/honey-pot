@@ -36,7 +36,6 @@ export class ProfileRpcs extends RpcGroup.make(
 		// TODO: proper failure types
 		error: S.Unknown,
 		payload: {
-			id: Profile.Profile.fields.id,
 			user_id: Profile.Profile.fields.user_id,
 			created_at: Profile.Profile.fields.created_at,
 			updated_at: Profile.Profile.fields.updated_at,
