@@ -9,8 +9,8 @@
         "start": "next start",
         "lint": "pnpx oxlint src --config .oxlintrc.json --tsconfig tsconfig.json",
         "lint:fix": "pnpx oxlint src --config .oxlintrc.json --tsconfig tsconfig.json --fix",
-        "fmt": "pnpm exec biome format src --config-path biome.json",
-        "fmt:fix": "pnpm exec biome format src --config-path biome.json --write",
+        "fmt": "pnpm exec biome format src",
+        "fmt:fix": "pnpm exec biome format src --write",
         "gen:supabase": "pnpx supabase gen types --lang=typescript --project-id=xyjjpwufeehopwdiqphr --schema=public >  src/lib/supabase/database.types.ts && pnpm exec biome format src/lib/supabase/database.types.ts --write"
     },
     "dependencies": {
