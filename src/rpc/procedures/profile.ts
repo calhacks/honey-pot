@@ -1,7 +1,7 @@
 import { Console, Effect, Schema as S } from "effect";
 import { SupabaseServerClient } from "@/lib/supabase/client";
 import { transformRawResultToEffect } from "@/lib/utils/supabase";
-import { ProfileRpcs } from "@/schema/rpc";
+import { ProfileRpcs } from "@/schema/rpc/profile";
 import { Profile } from "@/schema/supabase";
 
 export const ProfileProcedures = ProfileRpcs.toLayer(
