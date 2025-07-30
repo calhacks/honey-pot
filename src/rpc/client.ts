@@ -4,7 +4,7 @@ import { FetchHttpClient } from "@effect/platform";
 import { RpcClient, RpcSerialization } from "@effect/rpc";
 import { Effect, Layer, Redacted } from "effect";
 import { ClientEnv } from "@/lib/env/client";
-import { ProfileRpcs } from "@/schema/rpc";
+import { ProfileRpcs } from "@/schema/rpc/profile";
 
 export const ProtocolLive = Layer.unwrapEffect(
 	Effect.gen(function* () {
