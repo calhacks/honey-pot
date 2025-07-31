@@ -1,19 +1,22 @@
 "use client";
 
 import { Effect } from "effect";
-import { ClientEnv } from "@/lib/env/client";
+import useSWRMutation from "swr/mutation";
 import { Rpc } from "@/rpc/client";
+import type { LoginPayload } from "@/schema/rpc/login";
 
 const UseEmailLoginKey = "use-email-login";
 
-export interface UseEmailLoginProps {
-	email: string;
-}
+export function useEmailLogin() {
+	async function emailLogin(payload: LoginPayload) {
+		return Effect.gen(function* () {
+			const rpc = yield* Rpc;
+			return yield* rpc.EmailLogin(payload);
+		}).pipe(Effect.provide(Rpc.Default), Effect.runPromise);
+	}
 
-export function useEmailLogin(props: UseEmailLoginProps) {
-	const fetcher = Effect.gen(function* () {
-		const rpc = yield* Rpc;
-		const { NextPublicHost } = yield* ClientEnv;
-		return yield* rpc.EmailLogin({ email: props.email });
-	});
+	return useSWRMutation<ReturnType<typeof emailLogin>, Error, typeof UseEmailLoginKey, LoginPayload>(
+		UseEmailLoginKey,
+		(_, { arg }) => emailLogin(arg),
+	);
 }
