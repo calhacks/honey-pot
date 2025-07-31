@@ -1,9 +1,9 @@
 import { HttpServer } from "@effect/platform";
 import { RpcSerialization, RpcServer } from "@effect/rpc";
 import { Layer } from "effect";
-import { ProfileProcedures } from "@/rpc/procedures/profile";
-import { ProfileRpcs } from "@/schema/rpc/profile";
+import { Procedures } from "@/rpc/procedures";
+import { Rpcs } from "@/rpc/rpc";
 
-export const { handler, dispose } = RpcServer.toWebHandler(ProfileRpcs, {
-	layer: Layer.mergeAll(ProfileProcedures, RpcSerialization.layerJson, HttpServer.layerContext),
+export const { handler, dispose } = RpcServer.toWebHandler(Rpcs, {
+	layer: Layer.mergeAll(Procedures, RpcSerialization.layerJson, HttpServer.layerContext),
 });

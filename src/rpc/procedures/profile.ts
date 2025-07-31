@@ -1,7 +1,7 @@
 import { Console, Effect, Schema as S } from "effect";
 import { SupabaseServerClient } from "@/lib/supabase/client";
 import { transformRawResultToEffect } from "@/lib/utils/supabase";
-import { ProfileRpcs } from "@/schema/rpc/profile";
+import { ProfileRpcs } from "@/rpc/rpc/profile";
 import { Profile } from "@/schema/supabase";
 
 export const ProfileProcedures = ProfileRpcs.toLayer(
@@ -21,7 +21,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer(
 					Effect.provide(SupabaseServerClient.Default),
 					Effect.tapError(Console.log),
 					Effect.tapDefect(Console.log),
-					Effect.withSpan("@honey-pot/rpc/procedures/GetAllProfiles"),
+					Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/GetAllProfiles"),
 				),
 
 			GetProfileById: (request) =>
@@ -37,7 +37,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer(
 					Effect.provide(SupabaseServerClient.Default),
 					Effect.tapError(Console.log),
 					Effect.tapDefect(Console.log),
-					Effect.withSpan("@honey-pot/rpc/procedures/GetProfileById"),
+					Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/GetProfileById"),
 				),
 
 			InsertProfile: (request) =>
@@ -54,7 +54,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer(
 					Effect.provide(SupabaseServerClient.Default),
 					Effect.tapError(Console.log),
 					Effect.tapDefect(Console.log),
-					Effect.withSpan("@honey-pot/rpc/procedures/InsertProfile"),
+					Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/InsertProfile"),
 				),
 
 			UpdateProfile: (request) =>
@@ -71,7 +71,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer(
 					Effect.provide(SupabaseServerClient.Default),
 					Effect.tapError(Console.log),
 					Effect.tapDefect(Console.log),
-					Effect.withSpan("@honey-pot/rpc/procedures/UpdateProfile"),
+					Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/UpdateProfile"),
 				),
 
 			DeleteProfile: (request) =>
@@ -89,7 +89,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer(
 					Effect.provide(SupabaseServerClient.Default),
 					Effect.tapError(Console.log),
 					Effect.tapDefect(Console.log),
-					Effect.withSpan("@honey-pot/rpc/procedures/DeleteProfile"),
+					Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/DeleteProfile"),
 				),
 		};
 	}),

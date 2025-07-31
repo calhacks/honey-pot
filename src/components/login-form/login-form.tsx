@@ -5,18 +5,26 @@ import { Schema as S } from "effect";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import Logo from "@/app/assets/images/logo.svg";
+import { useEmailLogin } from "@/app/hooks/use-email-login";
 import { LoginButton } from "@/components/login-form/login-button";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
 export default function LoginForm() {
-	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-	} = useForm<EmailForm>({
+	const { trigger: emailLogin } = useEmailLogin();
+
+	const form = useForm<EmailForm>({
 		resolver: effectTsResolver(EmailFormSchema),
+		defaultValues: {
+			email: "",
+		},
 	});
+
+	async function onSubmit(emailForm: EmailForm) {
+		await emailLogin({ email: emailForm.email });
+	}
 
 	return (
 		<div className="flex flex-col gap-5 sm:w-[300px]">
@@ -31,9 +39,27 @@ export default function LoginForm() {
 
 			<Separator />
 
-			<form onSubmit={handleSubmit(onSubmit)}>
-				<Input {...register("email", { required: true })} />
-			</form>
+			<Form {...form}>
+				<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3">
+					<FormField
+						control={form.control}
+						name="email"
+						render={({ field }) => (
+							<FormItem>
+								<FormLabel>Email</FormLabel>
+								<FormControl>
+									<Input placeholder="oski@berkeley.edu" {...field} />
+								</FormControl>
+								<FormMessage />
+							</FormItem>
+						)}
+					/>
+
+					<Button type="submit" variant="default" disabled={form.formState.isSubmitting} className="w-full">
+						Login
+					</Button>
+				</form>
+			</Form>
 		</div>
 	);
 }
