@@ -23,14 +23,15 @@ export default function LoginForm() {
 	});
 
 	async function onSubmit(emailForm: EmailForm) {
-		await emailLogin({ email: emailForm.email });
+		const result = await emailLogin({ email: emailForm.email });
+		console.log(result);
 	}
 
 	return (
 		<div className="flex flex-col gap-5 sm:w-[300px]">
-			<div className="flex flex-col items-center gap-2">
-				<Image src={Logo} alt="Hackathons at Berkeley logo" height={60} />
-				<span className="font-sf font-semibold sm:text-2xl text-slate-800">Log in to your account</span>
+			<div className="flex flex-col items-center gap-4">
+				<Image src={Logo} alt="Hackathons at Berkeley logo" height={50} />
+				<span className="font-sf font-semibold sm:text-2xl text-slate-800">Application Portal</span>
 			</div>
 
 			<div className="flex flex-col items-center gap-2">

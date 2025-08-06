@@ -20,7 +20,7 @@ export const ServerEnv = Effect.gen(function* () {
 		SupabaseSecretDefaultKey: Config.redacted(SupabaseSecretDefaultKey),
 		SupabaseServiceRoleKey: Config.redacted(SupabaseServiceRoleKey),
 		SupabaseUrl: Config.redacted(SupabaseUrl),
-	});
+	}).pipe(Effect.catchTag("ConfigError", Effect.die));
 	return config;
 }).pipe(Effect.withSpan("@honey-pot/lib/env/server/ServerEnv"));
 
