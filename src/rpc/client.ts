@@ -19,5 +19,3 @@ export class Rpc extends Effect.Service<Rpc>()("@honey-pot/rpc/client/Rpc", {
 	scoped: RpcClient.make(Rpcs),
 	dependencies: [ProtocolLive],
 }) {}
-
-export const Live = Layer.mergeAll(ProtocolLive, Rpc.Default);

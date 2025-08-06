@@ -1,12 +1,34 @@
 import { Effect } from "effect";
 
-export type RawResult<T, E, Rest = unknown> = {
-	data: T | null;
-	error: E | null;
-} & Rest;
+export type RawResult<TData, TError> =
+	| {
+			data: TData;
+			error: null;
+	  }
+	| {
+			data: null;
+			error: TError;
+	  };
 
-export const transformRawResultToEffect = <T, E, Result extends RawResult<T, E, unknown>>(input: Result) =>
-	input.error === null ? Effect.succeed(input) : Effect.fail(input);
+export type RawResultWithErrorData<TData, TErrorData, TError> =
+	| {
+			data: TData;
+			error: null;
+	  }
+	| {
+			data: TErrorData;
+			error: TError;
+	  };
 
-export const supabaseQueryToEffect = <T extends PromiseLike<RawResult<any, any, any>>>(query: T) =>
-	Effect.tryPromise(() => query).pipe(Effect.flatMap(transformRawResultToEffect));
+export const transformRawResultToEffect = <TData, TError>(input: RawResult<TData, TError>) =>
+	((result: RawResult<TData, TError>): result is { data: TData; error: null } => result.error === null)(input)
+		? Effect.succeed(input.data)
+		: Effect.fail(input.error);
+
+export const transformRawResultWithErrorDataToEffect = <TData, TErrorData, TError>(
+	input: RawResultWithErrorData<TData, TErrorData, TError>,
+) =>
+	((result: RawResultWithErrorData<TData, TErrorData, TError>): result is { data: TData; error: null } =>
+		result.error === null)(input)
+		? Effect.succeed(input.data)
+		: Effect.fail(input.error);

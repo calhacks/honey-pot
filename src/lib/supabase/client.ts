@@ -1,5 +1,5 @@
 import { type CookieOptions, createServerClient } from "@supabase/ssr";
-import { Effect, Redacted } from "effect";
+import { Console, Effect, Redacted } from "effect";
 import { cookies } from "next/headers";
 import { ServerEnv } from "@/lib/env/server";
 import type { Database } from "@/lib/supabase/database.types";
@@ -9,7 +9,7 @@ export class SupabaseServerClient extends Effect.Service<SupabaseServerClient>()
 	{
 		effect: Effect.gen(function* () {
 			const { SupabaseUrl, SupabasePublishableDefaultKey } = yield* ServerEnv;
-			const cookieStore = yield* Effect.tryPromise(() => cookies());
+			const cookieStore = yield* Effect.promise(() => cookies());
 
 			const supabaseClient = createServerClient<Database>(
 				Redacted.value(SupabaseUrl),
@@ -25,6 +25,9 @@ export class SupabaseServerClient extends Effect.Service<SupabaseServerClient>()
 				},
 			);
 			return yield* Effect.succeed(supabaseClient);
-		}).pipe(Effect.withSpan("@honey-pot/lib/supabase/client/SupabaseServerClient")),
+		}).pipe(
+			Effect.tapErrorCause(Console.error),
+			Effect.withSpan("@honey-pot/lib/supabase/client/SupabaseServerClient"),
+		),
 	},
 ) {}

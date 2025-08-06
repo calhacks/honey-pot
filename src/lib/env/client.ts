@@ -1,4 +1,4 @@
-import { Config, Effect, Schema as S } from "effect";
+import { Config, Console, Effect, Schema as S } from "effect";
 
 export const ClientEnv = Effect.gen(function* () {
 	const NextPublicHost = S.Config("NEXT_PUBLIC_VERCEL_URL", S.NonEmptyString).pipe(
@@ -15,6 +15,6 @@ export const ClientEnv = Effect.gen(function* () {
 		NextPublicHost: Config.redacted(NextPublicHost),
 		NextPublicSupabaseAnonKey: Config.redacted(NextPublicSupabaseAnonKey),
 		NextPublicSupabaseUrl: Config.redacted(NextPublicSupabaseUrl),
-	});
+	}).pipe(Effect.catchTag("ConfigError", Effect.die));
 	return config;
-}).pipe(Effect.withSpan("@honey-pot/lib/env/client/ClientEnv"));
+}).pipe(Effect.tapErrorCause(Console.error), Effect.withSpan("@honey-pot/lib/env/client/ClientEnv"));
