@@ -54,7 +54,7 @@ export type UpdateProfileError = Rpc.Error<typeof UpdateProfile>;
 export type UpdateProfilePayload = Rpc.Payload<typeof UpdateProfile>;
 
 export const DeleteProfile = Rpc.make("DeleteProfile", {
-	success: S.Void,
+	success: S.Undefined,
 	// TODO: proper failure types
 	error: S.Unknown,
 	payload: S.Struct({

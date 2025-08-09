@@ -1,11 +1,12 @@
 "use client";
 
 import { effectTsResolver } from "@hookform/resolvers/effect-ts";
-import { Schema as S } from "effect";
+import { Cause, Schema as S } from "effect";
 import Image from "next/image";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import Logo from "@/app/assets/images/logo.svg";
-import { useEmailLogin } from "@/app/hooks/use-email-login";
+import { useEmailSendOtp } from "@/app/hooks/use-login";
 import { LoginButton } from "@/components/login-form/login-button";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -13,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 
 export default function LoginForm() {
-	const { trigger: emailLogin } = useEmailLogin();
+	const { trigger: emailSendOtp } = useEmailSendOtp();
 
 	const form = useForm<EmailForm>({
 		resolver: effectTsResolver(EmailFormSchema),
@@ -23,8 +24,14 @@ export default function LoginForm() {
 	});
 
 	async function onSubmit(emailForm: EmailForm) {
-		const result = await emailLogin({ email: emailForm.email });
-		console.log(result);
+		await emailSendOtp({
+			email: emailForm.email,
+			onSuccess: (data) => console.log(data),
+			onError: (error) =>
+				form.setError("email", {
+					message: error.message,
+				}),
+		});
 	}
 
 	return (
@@ -57,14 +64,13 @@ export default function LoginForm() {
 					/>
 
 					<Button type="submit" variant="default" disabled={form.formState.isSubmitting} className="w-full">
-						Login
+						Log in
 					</Button>
 				</form>
 			</Form>
 		</div>
 	);
 }
-
 const EmailFormSchema = S.Struct({
 	email: S.String.pipe(
 		S.nonEmptyString({ message: () => "Email is required" }),

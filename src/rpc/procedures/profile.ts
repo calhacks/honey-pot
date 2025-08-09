@@ -72,12 +72,13 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 			const supabase = yield* SupabaseServerClient;
 			const serialized = S.decodeUnknown(Profile.Serialize)(request);
 
-			return yield* serialized.pipe(
+			yield* serialized.pipe(
 				Effect.flatMap((request) =>
 					Effect.tryPromise(() => supabase.from("profiles").delete().eq("id", request.id)),
 				),
-				Effect.asVoid,
 			);
+
+			return yield* Effect.succeed(undefined);
 		}).pipe(
 			Effect.provide(SupabaseServerClient.Default),
 			Effect.tapErrorCause(Console.error),
