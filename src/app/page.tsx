@@ -2,7 +2,7 @@
 
 import { Effect } from "effect";
 import { useEffect, useState } from "react";
-import { Rpc } from "@/rpc/client";
+import { Rpc, rpc } from "@/rpc/client";
 import type { Profile } from "@/schema/supabase";
 
 export default function Home() {
@@ -19,10 +19,10 @@ function useGetAllProfiles() {
 	const [profiles, setProfiles] = useState<readonly Profile.Profile[]>([]);
 
 	useEffect(() => {
-		const program = Effect.gen(function* () {
-			const rpc = yield* Rpc;
-			return yield* rpc.GetAllProfiles({});
-		}).pipe(Effect.provide(Rpc.Default), Effect.runPromise);
+		rpc(Rpc.GetAllProfiles({})).pipe(
+			Effect.tap((result) => setProfiles(result)),
+			Effect.runPromise,
+		);
 	}, []);
 
 	return profiles;

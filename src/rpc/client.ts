@@ -15,7 +15,8 @@ export const ProtocolLive = Layer.unwrapEffect(
 	}),
 ).pipe(Layer.provide([FetchHttpClient.layer, RpcSerialization.layerJson]));
 
-export class Rpc extends Effect.Service<Rpc>()("@honey-pot/rpc/client/Rpc", {
-	scoped: RpcClient.make(Rpcs),
-	dependencies: [ProtocolLive],
-}) {}
+export const Rpc = Effect.serviceFunctions(RpcClient.make(Rpcs));
+
+export function rpc<A, E, R>(result: Effect.Effect<A, E, R>) {
+	return result.pipe(Effect.provide(ProtocolLive), Effect.scoped);
+}
