@@ -1,6 +1,7 @@
 import { Console, Effect, Schema as S } from "effect";
 import { SupabaseServerClient } from "@/lib/supabase/client";
-import { transformRawResultToEffect } from "@/lib/utils/supabase";
+import { NodeTracer } from "@/lib/tracing/spans";
+import { SupabaseUser, transformRawResultToEffect } from "@/lib/utils/supabase";
 import { ProfileRpcs } from "@/rpc/rpc/profile";
 import { Profile } from "@/schema/supabase";
 
@@ -10,14 +11,19 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 			const supabase = yield* SupabaseServerClient;
 			const query = supabase.from("profiles").select("*", { count: "exact" });
 
+			const user = yield* SupabaseUser;
+			yield* Console.log(user);
+
 			return yield* Effect.tryPromise(() => query).pipe(
 				Effect.flatMap(transformRawResultToEffect),
 				Effect.flatMap((result) => S.decodeUnknown(S.Array(Profile.Profile))(result)),
 			);
 		}).pipe(
-			Effect.provide(SupabaseServerClient.Default),
 			Effect.tapErrorCause(Console.error),
 			Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/GetAllProfiles"),
+			Effect.provide(SupabaseServerClient.Default),
+			Effect.provide(SupabaseUser.Default),
+			Effect.provide(NodeTracer),
 		),
 
 	GetProfileById: (request) =>
@@ -30,12 +36,13 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 				Effect.flatMap((result) => S.decodeUnknown(Profile.Profile)(result)),
 			);
 		}).pipe(
-			Effect.provide(SupabaseServerClient.Default),
 			Effect.tapErrorCause(Console.error),
 			Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/GetProfileById"),
+			Effect.provide(SupabaseServerClient.Default),
+			Effect.provide(NodeTracer),
 		),
 
-	InsertProfile: (request) =>
+	CreateProfile: (request) =>
 		Effect.gen(function* () {
 			const supabase = yield* SupabaseServerClient;
 			const serialized = S.decodeUnknown(Profile.Serialize)(request);
@@ -46,9 +53,10 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 				Effect.flatMap((result) => S.decodeUnknown(Profile.Profile)(result)),
 			);
 		}).pipe(
-			Effect.provide(SupabaseServerClient.Default),
 			Effect.tapErrorCause(Console.error),
-			Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/InsertProfile"),
+			Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/CreateProfile"),
+			Effect.provide(SupabaseServerClient.Default),
+			Effect.provide(NodeTracer),
 		),
 
 	UpdateProfile: (request) =>
@@ -62,9 +70,10 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 				Effect.flatMap((result) => S.decodeUnknown(Profile.Profile)(result)),
 			);
 		}).pipe(
-			Effect.provide(SupabaseServerClient.Default),
 			Effect.tapErrorCause(Console.error),
 			Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/UpdateProfile"),
+			Effect.provide(SupabaseServerClient.Default),
+			Effect.provide(NodeTracer),
 		),
 
 	DeleteProfile: (request) =>
@@ -80,8 +89,9 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 
 			return yield* Effect.succeed(undefined);
 		}).pipe(
-			Effect.provide(SupabaseServerClient.Default),
 			Effect.tapErrorCause(Console.error),
 			Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/DeleteProfile"),
+			Effect.provide(SupabaseServerClient.Default),
+			Effect.provide(NodeTracer),
 		),
 });

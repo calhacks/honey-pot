@@ -1,12 +1,17 @@
 import { Schema as S } from "effect";
 
+export namespace Enums {
+	export const Role = S.Literal("admin", "team", "staff", "hacker");
+	export type Role = typeof Role.Type;
+}
+
 export namespace Profile {
 	export const Profile = S.Struct({
 		id: S.UUID,
 		user_id: S.UUID,
 		created_at: S.Date,
 		updated_at: S.Date,
-		role: S.Literal("admin", "team", "staff", "hacker"),
+		role: Enums.Role,
 		avatar_url: S.NullOr(S.String),
 	});
 
@@ -16,8 +21,8 @@ export namespace Profile {
 		updated_at: S.String,
 	});
 
-	export type Profile = S.Schema.Type<typeof Profile>;
-	export type ProfileSerialize = S.Schema.Type<typeof Serialize>;
+	export type Profile = typeof Profile.Type;
+	export type ProfileSerialize = typeof Serialize.Type;
 }
 
 export namespace Event {
@@ -35,7 +40,7 @@ export namespace Event {
 		live_site_absolute_url: S.NullOr(S.String),
 	});
 
-	export type Event = S.Schema.Type<typeof Table>;
+	export type Event = typeof Table.Type;
 }
 
 export namespace ProfileEventAccess {
@@ -46,9 +51,5 @@ export namespace ProfileEventAccess {
 		granted_by: S.UUID,
 	});
 
-	export type ProfileEventAccess = S.Schema.Type<typeof Table>;
-}
-
-export namespace Enums {
-	export const Role = S.Literal("admin", "team", "staff", "hacker");
+	export type ProfileEventAccess = typeof Table.Type;
 }

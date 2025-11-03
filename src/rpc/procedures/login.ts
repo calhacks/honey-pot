@@ -1,6 +1,7 @@
 import { AuthError } from "@supabase/supabase-js";
 import { Console, Effect } from "effect";
 import { SupabaseServerClient } from "@/lib/supabase/client";
+import { NodeTracer } from "@/lib/tracing/spans";
 import { transformRawResultWithErrorDataToEffect } from "@/lib/utils/supabase";
 import { LoginRpcs, SupabaseError } from "@/rpc/rpc/login";
 
@@ -32,8 +33,9 @@ export const LoginProcedures = LoginRpcs.toLayer({
 
 			return yield* Effect.succeed(undefined);
 		}).pipe(
-			Effect.provide(SupabaseServerClient.Default),
 			Effect.tapErrorCause(Console.error),
 			Effect.withSpan("@honey-pot/rpc/procedures/login/LoginProcedures/EmailSendOtp"),
+			Effect.provide(SupabaseServerClient.Default),
+			Effect.provide(NodeTracer),
 		),
 });

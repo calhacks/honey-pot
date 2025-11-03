@@ -26,7 +26,7 @@ export type GetProfileByIdSuccess = Rpc.Success<typeof GetProfileById>;
 export type GetProfileByIdError = Rpc.Error<typeof GetProfileById>;
 export type GetProfileByIdPayload = Rpc.Payload<typeof GetProfileById>;
 
-export const InsertProfile = Rpc.make("InsertProfile", {
+export const CreateProfile = Rpc.make("CreateProfile", {
 	success: Profile.Profile,
 	// TODO: proper failure types
 	error: S.Unknown,
@@ -69,7 +69,7 @@ export type DeleteProfilePayload = Rpc.Payload<typeof DeleteProfile>;
 export class ProfileRpcs extends RpcGroup.make(
 	GetAllProfiles,
 	GetProfileById,
-	InsertProfile,
+	CreateProfile,
 	UpdateProfile,
 	DeleteProfile,
 ) {}

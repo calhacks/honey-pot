@@ -13,7 +13,7 @@ export const ProtocolLive = Layer.unwrapEffect(
 			url: `${Redacted.value(NextPublicHost)}/api/rpc`,
 		});
 	}),
-).pipe(Layer.provide([FetchHttpClient.layer, RpcSerialization.layerJson]));
+).pipe(Layer.provide([ClientEnv.Default, FetchHttpClient.layer, RpcSerialization.layerJson]));
 
 export const Rpc = Effect.serviceFunctions(RpcClient.make(Rpcs));
 
