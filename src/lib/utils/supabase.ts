@@ -1,4 +1,20 @@
-import { Effect } from "effect";
+import type { AuthError, User } from "@supabase/supabase-js";
+import { Data, Effect } from "effect";
+import { SupabaseServerClient } from "@/lib/supabase/client";
+
+export class SupabaseUser extends Effect.Service<SupabaseUser>()("@honey-pot/src/lib/utils/supabase/SupabaseUser", {
+	effect: Effect.gen(function* () {
+		const supabase = yield* SupabaseServerClient;
+		return yield* Effect.tryPromise(() => supabase.auth.getUser()).pipe(
+			Effect.flatMap(transformRawResultWithErrorDataToEffect<{ user: User }, { user: null }, AuthError>),
+			Effect.map((user) => user.user),
+			Effect.catchAll(() => new UserNotFound()),
+		);
+	}),
+	dependencies: [SupabaseServerClient.Default],
+}) {}
+
+export class UserNotFound extends Data.TaggedError("UserNotFound") {}
 
 export type RawResult<TData, TError> =
 	| {

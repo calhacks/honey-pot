@@ -1,66 +1,53 @@
 import { createServerClient } from "@supabase/ssr";
-import type { NextRequest } from "next/server";
-import { NextResponse } from "next/server";
+import { Console, Effect, Redacted } from "effect";
+import { type NextRequest, NextResponse } from "next/server";
+import { ServerEnv } from "@/lib/env/server";
+import { NodeTracer } from "@/lib/tracing/spans";
 
-export async function updateSession(request: NextRequest) {
-	let supabaseResponse = NextResponse.next({
-		request,
-	});
+export const updateSession = async (request: NextRequest) =>
+	Effect.gen(function* () {
+		let response = NextResponse.next({ request });
 
-	if (request.nextUrl.pathname === "/api/rpc") {
-		return supabaseResponse;
-	}
-
-	const supabase = createServerClient(process.env.SUPABASE_URL!, process.env.SUPABASE_PUBLISHABLE_DEFAULT_KEY!, {
-		cookies: {
-			getAll() {
-				return request.cookies.getAll();
+		const { SupabaseUrl, SupabasePublishableDefaultKey } = yield* ServerEnv;
+		const supabase = createServerClient(
+			Redacted.value(SupabaseUrl),
+			Redacted.value(SupabasePublishableDefaultKey),
+			{
+				cookies: {
+					getAll() {
+						return request.cookies.getAll();
+					},
+					setAll(cookiesToSet) {
+						cookiesToSet.forEach(({ name, value }) => {
+							request.cookies.set(name, value);
+						});
+						response = NextResponse.next({ request });
+						cookiesToSet.forEach(({ name, value, options }) => {
+							response.cookies.set(name, value, options);
+						});
+					},
+				},
 			},
-			setAll(cookiesToSet) {
-				cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-				supabaseResponse = NextResponse.next({
-					request,
-				});
-				cookiesToSet.forEach(({ name, value, options }) => supabaseResponse.cookies.set(name, value, options));
-			},
-		},
-	});
+		);
 
-	// Do not run code between createServerClient and
-	// supabase.auth.getUser(). A simple mistake could make it very hard to debug
-	// issues with users being randomly logged out.
+		// return yield* Effect.succeed(response);
 
-	// IMPORTANT: DO NOT REMOVE auth.getUser()
-
-	const {
-		data: { user },
-	} = await supabase.auth.getUser();
-
-	if (
-		!user &&
-		!request.nextUrl.pathname.startsWith("/login") &&
-		request.nextUrl.pathname !== "/" &&
-		request.nextUrl.pathname !== ""
-	) {
-		// no user, potentially respond by redirecting the user to the login page
-		console.log(request.nextUrl);
-		const url = request.nextUrl.clone();
-		url.pathname = "/login";
-		return NextResponse.redirect(url);
-	}
-
-	// IMPORTANT: You *must* return the supabaseResponse object as it is.
-	// If you're creating a new response object with NextResponse.next() make sure to:
-	// 1. Pass the request in it, like so:
-	//    const myNewResponse = NextResponse.next({ request })
-	// 2. Copy over the cookies, like so:
-	//    myNewResponse.cookies.setAll(supabaseResponse.cookies.getAll())
-	// 3. Change the myNewResponse object to fit your needs, but avoid changing
-	//    the cookies!
-	// 4. Finally:
-	//    return myNewResponse
-	// If this is not done, you may be causing the browser and server to go out
-	// of sync and terminate the user's session prematurely!
-
-	return supabaseResponse;
-}
+		return yield* Effect.tryPromise(() => supabase.auth.getUser()).pipe(
+			Effect.map(({ data }) => data.user),
+			Effect.flatMap(Effect.fromNullable),
+			Effect.map(() => response),
+			Effect.catchAll(() => {
+				if (!request.nextUrl.pathname.startsWith("/login")) {
+					const url = request.nextUrl.clone();
+					url.pathname = "/login";
+					return Effect.succeed(NextResponse.redirect(url));
+				}
+				return Effect.succeed(response);
+			}),
+		);
+	}).pipe(
+		Effect.withSpan("@honey-pot/src/lib/supabase/middleware/updateSession"),
+		Effect.provide(ServerEnv.Default),
+		Effect.provide(NodeTracer),
+		Effect.runPromise,
+	);

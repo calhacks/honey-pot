@@ -18,16 +18,13 @@ export class SupabaseServerClient extends Effect.Service<SupabaseServerClient>()
 					cookies: {
 						getAll: () => cookieStore.getAll(),
 						setAll: (cookies: { name: string; value: string; options: CookieOptions }[]) =>
-							Effect.try(() =>
-								cookies.forEach(({ name, value, options }) => cookieStore.set(name, value, options)),
-							).pipe(Effect.runSync),
+							cookies.forEach(({ name, value, options }) => {
+								cookieStore.set(name, value, options);
+							}),
 					},
 				},
 			);
-			return yield* Effect.succeed(supabaseClient);
-		}).pipe(
-			Effect.tapErrorCause(Console.error),
-			Effect.withSpan("@honey-pot/lib/supabase/client/SupabaseServerClient"),
-		),
+			return supabaseClient;
+		}).pipe(Effect.provide(ServerEnv.Default), Effect.tapErrorCause(Console.error)),
 	},
 ) {}

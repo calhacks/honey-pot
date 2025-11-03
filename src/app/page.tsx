@@ -1,6 +1,6 @@
 "use client";
 
-import { Effect } from "effect";
+import { Console, Effect } from "effect";
 import { useEffect, useState } from "react";
 import { Rpc, rpc } from "@/rpc/client";
 import type { Profile } from "@/schema/supabase";
