@@ -1,18 +1,32 @@
 "use client";
 
 import type { RpcClientError } from "@effect/rpc";
+import { useEffectMutationSWR } from "@/hooks/use-effect-swr";
 import { Rpc, rpc } from "@/rpc/client";
-import type { EmailSendOtpError, EmailSendOtpPayload, EmailSendOtpSuccess } from "@/rpc/rpc/login";
-import { useEffectMutationSWR } from "./use-effect-swr";
+import type {
+	GoogleOAuthLoginError,
+	GoogleOAuthLoginPayload,
+	GoogleOAuthLoginSuccess,
+	SendMagicLinkError,
+	SendMagicLinkPayload,
+	SendMagicLinkSuccess,
+} from "@/rpc/rpc/login";
 
-const UseEmailSendOtpKey = "use-email-send-otp";
+const UseSendMagicLinkKey = "use-send-magic-link";
+const UseGoogleOAuthKey = "use-google-oauth";
 
-export function useEmailSendOtp() {
+export function useSendMagicLink() {
 	return useEffectMutationSWR<
-		EmailSendOtpSuccess,
-		EmailSendOtpError | RpcClientError.RpcClientError,
-		EmailSendOtpPayload
-	>(UseEmailSendOtpKey, (payload) => rpc(Rpc.EmailSendOtp(payload)));
+		SendMagicLinkSuccess,
+		SendMagicLinkError | RpcClientError.RpcClientError,
+		SendMagicLinkPayload
+	>(UseSendMagicLinkKey, (payload) => rpc(Rpc.SendMagicLink(payload)));
 }
 
-export function useEmailEnterOtp() {}
+export function useGoogleOAuth() {
+	return useEffectMutationSWR<
+		GoogleOAuthLoginSuccess,
+		GoogleOAuthLoginError | RpcClientError.RpcClientError,
+		GoogleOAuthLoginPayload
+	>(UseGoogleOAuthKey, (payload) => rpc(Rpc.GoogleOAuthLogin(payload)));
+}

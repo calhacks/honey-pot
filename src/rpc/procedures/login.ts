@@ -1,12 +1,12 @@
-import { AuthError } from "@supabase/supabase-js";
-import { Console, Effect } from "effect";
+import { Console, Effect, Redacted } from "effect";
+import { ServerEnv } from "@/lib/env/server";
 import { SupabaseServerClient } from "@/lib/supabase/client";
 import { NodeTracer } from "@/lib/tracing/spans";
 import { transformRawResultWithErrorDataToEffect } from "@/lib/utils/supabase";
-import { LoginRpcs, SupabaseError } from "@/rpc/rpc/login";
+import { LoginRpcs } from "@/rpc/rpc/login";
 
 export const LoginProcedures = LoginRpcs.toLayer({
-	EmailSendOtp: (request) =>
+	SendMagicLink: (request) =>
 		Effect.gen(function* () {
 			const supabase = yield* SupabaseServerClient;
 
@@ -17,25 +17,40 @@ export const LoginProcedures = LoginRpcs.toLayer({
 						shouldCreateUser: true,
 					},
 				}),
-			).pipe(
-				Effect.flatMap(transformRawResultWithErrorDataToEffect),
-				Effect.catchAll((error) =>
-					Effect.gen(function* () {
-						if (error instanceof AuthError) {
-							return yield* Effect.fail(new SupabaseError({ message: error.message, name: error.name }));
-						}
-						return yield* Effect.fail(
-							new SupabaseError({ message: "Unknown error", name: "UnknownError" }),
-						);
-					}),
-				),
+			).pipe(Effect.flatMap(transformRawResultWithErrorDataToEffect));
+
+			return undefined;
+		}).pipe(
+			Effect.withSpan("@honey-pot/rpc/procedures/login/LoginProcedures/SendMagicLink"),
+			Effect.tapErrorCause(Console.error),
+			Effect.provide(SupabaseServerClient.Default),
+			Effect.provide(NodeTracer),
+		),
+
+	GoogleOAuthLogin: () =>
+		Effect.gen(function* () {
+			const supabase = yield* SupabaseServerClient;
+			const { NextPublicVercelUrl } = yield* ServerEnv;
+
+			const { data, error } = yield* Effect.tryPromise(() =>
+				supabase.auth.signInWithOAuth({
+					provider: "google",
+					options: {
+						redirectTo: `${Redacted.value(NextPublicVercelUrl)}/auth/callback`,
+					},
+				}),
 			);
 
-			return yield* Effect.succeed(undefined);
+			if (error) {
+				return yield* Effect.fail(error);
+			}
+
+			return data.url;
 		}).pipe(
+			Effect.withSpan("@honey-pot/rpc/procedures/login/LoginProcedures/GoogleOAuthLogin"),
 			Effect.tapErrorCause(Console.error),
-			Effect.withSpan("@honey-pot/rpc/procedures/login/LoginProcedures/EmailSendOtp"),
 			Effect.provide(SupabaseServerClient.Default),
+			Effect.provide(ServerEnv.Default),
 			Effect.provide(NodeTracer),
 		),
 });

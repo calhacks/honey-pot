@@ -13,6 +13,8 @@ export class ServerEnv extends Effect.Service<ServerEnv>()("@honey-pot/lib/env/s
 			NextPublicSupabaseAnonKey: Config.redacted(NextPublicSupabaseAnonKey),
 			NextPublicSupabaseUrl: Config.redacted(NextPublicSupabaseUrl),
 
+			NextPublicVercelUrl: Config.redacted(NextPublicVercelUrl),
+
 			PostgresDatabase: Config.redacted(PostgresDatabase),
 			PostgresHost: Config.redacted(PostgresHost),
 			PostgresPassword: Config.redacted(PostgresPassword),
@@ -33,7 +35,10 @@ export class ServerEnv extends Effect.Service<ServerEnv>()("@honey-pot/lib/env/s
 			BetterStackOtelMetricsEndpoint: Config.redacted(BetterStackOtelMetricsEndpoint),
 			BetterStackOtelServiceName: Config.redacted(BetterStackOtelServiceName),
 			BetterStackOtelTracesEndpoint: Config.redacted(BetterStackOtelTracesEndpoint),
-		}).pipe(Effect.catchTag("ConfigError", Effect.die));
+
+			GoogleClientId: Config.redacted(GoogleClientId),
+			GoogleClientSecret: Config.redacted(GoogleClientSecret),
+		});
 		return config;
 	}),
 }) {}
@@ -52,6 +57,11 @@ export const NextPublicSupabaseAnonKey = S.Config("NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 export const NextPublicSupabaseUrl = S.Config("NEXT_PUBLIC_SUPABASE_URL", S.NonEmptyString).pipe(
 	Config.withDefault(S.decodeUnknownSync(S.String)(process.env.NEXT_PUBLIC_SUPABASE_URL)),
+);
+// Vercel only exposes the preview deployment URL, so I added custom fallbacks URLs for development and production environments.
+// In the case that `VERCEL_URL` is not defined, then the program is running in a preview environment.
+export const NextPublicVercelUrl = S.Config("NEXT_PUBLIC_VERCEL_URL", S.NonEmptyString).pipe(
+	Config.withDefault(S.decodeUnknownSync(S.String)(process.env.NEXT_PUBLIC_VERCEL_URL)),
 );
 
 export const PostgresDatabase = S.Config("POSTGRES_DATABASE", S.NonEmptyString).pipe(
@@ -113,4 +123,11 @@ export const BetterStackOtelServiceName = S.Config("BETTER_STACK_OTEL_SERVICE_NA
 );
 export const BetterStackOtelTracesEndpoint = S.Config("BETTER_STACK_OTEL_TRACES_ENDPOINT", S.NonEmptyString).pipe(
 	Config.withDefault(S.decodeUnknownSync(S.String)(process.env.BETTER_STACK_OTEL_TRACES_ENDPOINT)),
+);
+
+export const GoogleClientId = S.Config("GOOGLE_CLIENT_ID", S.NonEmptyString).pipe(
+	Config.withDefault(S.decodeUnknownSync(S.String)(process.env.GOOGLE_CLIENT_ID)),
+);
+export const GoogleClientSecret = S.Config("GOOGLE_CLIENT_SECRET", S.NonEmptyString).pipe(
+	Config.withDefault(S.decodeUnknownSync(S.String)(process.env.GOOGLE_CLIENT_SECRET)),
 );

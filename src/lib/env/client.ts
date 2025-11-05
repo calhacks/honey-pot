@@ -11,11 +11,18 @@ export class ClientEnv extends Effect.Service<ClientEnv>()("@honey-pot/lib/env/c
 		const NextPublicSupabaseUrl = S.Config("NEXT_PUBLIC_SUPABASE_URL", S.NonEmptyString).pipe(
 			Config.withDefault(S.decodeUnknownSync(S.String)(process.env.NEXT_PUBLIC_SUPABASE_URL)),
 		);
+		// Vercel only exposes the preview deployment URL, so I added custom fallbacks URLs for development and production environments.
+		// In the case that `VERCEL_URL` is not defined, then the program is running in a preview environment.
+		const NextPublicVercelUrl = S.Config("NEXT_PUBLIC_VERCEL_URL", S.NonEmptyString).pipe(
+			Config.withDefault(S.decodeUnknownSync(S.String)(process.env.NEXT_PUBLIC_VERCEL_URL)),
+		);
 
 		const config = yield* Config.all({
 			NextPublicHost: Config.redacted(NextPublicHost),
 			NextPublicSupabaseAnonKey: Config.redacted(NextPublicSupabaseAnonKey),
 			NextPublicSupabaseUrl: Config.redacted(NextPublicSupabaseUrl),
+
+			NextPublicVercelUrl: Config.redacted(NextPublicVercelUrl),
 		}).pipe(Effect.catchTag("ConfigError", Effect.die));
 		return config;
 	}),

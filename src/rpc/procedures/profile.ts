@@ -9,10 +9,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 	GetAllProfiles: () =>
 		Effect.gen(function* () {
 			const supabase = yield* SupabaseServerClient;
-			const query = supabase.from("profiles").select("*", { count: "exact" });
-
-			const user = yield* SupabaseUser;
-			yield* Console.log(user);
+			const query = supabase.from("profiles").select("*");
 
 			return yield* Effect.tryPromise(() => query).pipe(
 				Effect.flatMap(transformRawResultToEffect),

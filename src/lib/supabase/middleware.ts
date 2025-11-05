@@ -1,5 +1,5 @@
 import { createServerClient } from "@supabase/ssr";
-import { Console, Effect, Redacted } from "effect";
+import { Effect, Redacted } from "effect";
 import { type NextRequest, NextResponse } from "next/server";
 import { ServerEnv } from "@/lib/env/server";
 import { NodeTracer } from "@/lib/tracing/spans";
@@ -29,8 +29,6 @@ export const updateSession = async (request: NextRequest) =>
 				},
 			},
 		);
-
-		// return yield* Effect.succeed(response);
 
 		return yield* Effect.tryPromise(() => supabase.auth.getUser()).pipe(
 			Effect.map(({ data }) => data.user),
