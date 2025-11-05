@@ -60,8 +60,8 @@ export const NextPublicSupabaseUrl = S.Config("NEXT_PUBLIC_SUPABASE_URL", S.NonE
 );
 // Vercel only exposes the preview deployment URL, so I added custom fallbacks URLs for development and production environments.
 // In the case that `VERCEL_URL` is not defined, then the program is running in a preview environment.
-export const NextPublicVercelUrl = S.Config("NEXT_PUBLIC_VERCEL_URL", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.string(process.env.NEXT_PUBLIC_VERCEL_URL)),
+export const NextPublicVercelUrl = Config.nonEmptyString("NEXT_PUBLIC_VERCEL_URL").pipe(
+	Config.orElse(() => Config.succeed(Config.nonEmptyString(process.env.NEXT_PUBLIC_VERCEL_URL))),
 );
 
 export const PostgresDatabase = S.Config("POSTGRES_DATABASE", S.NonEmptyString).pipe(
