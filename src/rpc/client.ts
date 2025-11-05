@@ -8,9 +8,9 @@ import { Rpcs } from "@/rpc/rpc";
 
 export const ProtocolLive = Layer.unwrapEffect(
 	Effect.gen(function* () {
-		const { NextPublicHost } = yield* ClientEnv;
+		const { NextPublicVercelUrl } = yield* ClientEnv;
 		return RpcClient.layerProtocolHttp({
-			url: `${Redacted.value(NextPublicHost)}/api/rpc`,
+			url: `${Redacted.value(NextPublicVercelUrl)}/api/rpc`,
 		});
 	}),
 ).pipe(Layer.provide([ClientEnv.Default, FetchHttpClient.layer, RpcSerialization.layerJson]));
