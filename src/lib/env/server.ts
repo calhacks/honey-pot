@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 import { Config, Effect, Schema as S } from "effect";
 import { Environment } from "@/schema/meta";
 
-export class ServerEnv extends Effect.Service<ServerEnv>()("@honey-pot/lib/env/server/ServerEnv", {
+export class ServerEnv extends Effect.Service<ServerEnv>()("@honey-pot/src/lib/env/server/ServerEnv", {
 	effect: Effect.gen(function* () {
 		Effect.try(() => dotenv.config({ path: ".env.local" }));
 
