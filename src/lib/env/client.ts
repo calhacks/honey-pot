@@ -6,15 +6,21 @@ export class ClientEnv extends Effect.Service<ClientEnv>()("@honey-pot/lib/env/c
 			Config.withDefault("http://localhost:3000"),
 		);
 		const NextPublicSupabaseAnonKey = S.Config("NEXT_PUBLIC_SUPABASE_ANON_KEY", S.NonEmptyString).pipe(
-			Config.orElse(() => Config.succeed(Config.string(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY))),
+			Config.orElse(() =>
+				Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)),
+			),
 		);
 		const NextPublicSupabaseUrl = S.Config("NEXT_PUBLIC_SUPABASE_URL", S.NonEmptyString).pipe(
-			Config.orElse(() => Config.succeed(Config.string(process.env.NEXT_PUBLIC_SUPABASE_URL))),
+			Config.orElse(() =>
+				Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.NEXT_PUBLIC_SUPABASE_URL)),
+			),
 		);
 		// Vercel only exposes the preview deployment URL, so I added custom fallbacks URLs for development and production environments.
 		// In the case that `VERCEL_URL` is not defined, then the program is running in a preview environment.
 		const NextPublicVercelUrl = S.Config("NEXT_PUBLIC_VERCEL_URL", S.NonEmptyString).pipe(
-			Config.orElse(() => Config.succeed(Config.string(process.env.NEXT_PUBLIC_VERCEL_URL))),
+			Config.orElse(() =>
+				Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.NEXT_PUBLIC_VERCEL_URL)),
+			),
 		);
 
 		const config = yield* Config.all({
