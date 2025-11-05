@@ -1,8 +1,8 @@
 import { createServerClient } from "@supabase/ssr";
-import { Effect, Redacted } from "effect";
+import { Effect, pipe, Redacted } from "effect";
 import { type NextRequest, NextResponse } from "next/server";
 import { ServerEnv } from "@/lib/env/server";
-import { NodeTracer } from "@/lib/tracing/spans";
+// import { NodeTracer } from "@/lib/tracing/spans";
 
 export const updateSession = async (request: NextRequest) =>
 	Effect.gen(function* () {
@@ -30,10 +30,13 @@ export const updateSession = async (request: NextRequest) =>
 			},
 		);
 
-		return yield* Effect.tryPromise(() => supabase.auth.getUser()).pipe(
+		return yield* pipe(
+			Effect.tryPromise(() => supabase.auth.getUser()),
 			Effect.map(({ data }) => data.user),
 			Effect.flatMap(Effect.fromNullable),
+			// successfully fetch user => user exists => continue response
 			Effect.map(() => response),
+			// otherwise redirect to login page
 			Effect.catchAll(() => {
 				if (!request.nextUrl.pathname.startsWith("/login")) {
 					const url = request.nextUrl.clone();
@@ -44,8 +47,8 @@ export const updateSession = async (request: NextRequest) =>
 			}),
 		);
 	}).pipe(
-		Effect.withSpan("@honey-pot/src/lib/supabase/middleware/updateSession"),
+		// Not sure if it's beneficial to have tracing in middleware (bloats traces)
+		// Effect.withSpan("@honey-pot/src/lib/supabase/middleware/updateSession"),
 		Effect.provide(ServerEnv.Default),
-		Effect.provide(NodeTracer),
 		Effect.runPromise,
 	);

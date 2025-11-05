@@ -17,7 +17,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 			);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
-			Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/GetAllProfiles"),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/GetAllProfiles"),
 			Effect.provide(SupabaseServerClient.Default),
 			Effect.provide(SupabaseUser.Default),
 			Effect.provide(NodeTracer),
@@ -34,7 +34,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 			);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
-			Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/GetProfileById"),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/GetProfileById"),
 			Effect.provide(SupabaseServerClient.Default),
 			Effect.provide(NodeTracer),
 		),
@@ -51,7 +51,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 			);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
-			Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/CreateProfile"),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/CreateProfile"),
 			Effect.provide(SupabaseServerClient.Default),
 			Effect.provide(NodeTracer),
 		),
@@ -68,7 +68,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 			);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
-			Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/UpdateProfile"),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/UpdateProfile"),
 			Effect.provide(SupabaseServerClient.Default),
 			Effect.provide(NodeTracer),
 		),
@@ -87,7 +87,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 			return yield* Effect.succeed(undefined);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
-			Effect.withSpan("@honey-pot/rpc/procedures/profile/ProfileProcedures/DeleteProfile"),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/DeleteProfile"),
 			Effect.provide(SupabaseServerClient.Default),
 			Effect.provide(NodeTracer),
 		),

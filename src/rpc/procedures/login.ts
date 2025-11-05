@@ -21,7 +21,7 @@ export const LoginProcedures = LoginRpcs.toLayer({
 
 			return undefined;
 		}).pipe(
-			Effect.withSpan("@honey-pot/rpc/procedures/login/LoginProcedures/SendMagicLink"),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/login/LoginProcedures/SendMagicLink"),
 			Effect.tapErrorCause(Console.error),
 			Effect.provide(SupabaseServerClient.Default),
 			Effect.provide(NodeTracer),
@@ -47,7 +47,7 @@ export const LoginProcedures = LoginRpcs.toLayer({
 
 			return data.url;
 		}).pipe(
-			Effect.withSpan("@honey-pot/rpc/procedures/login/LoginProcedures/GoogleOAuthLogin"),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/login/LoginProcedures/GoogleOAuthLogin"),
 			Effect.tapErrorCause(Console.error),
 			Effect.provide(SupabaseServerClient.Default),
 			Effect.provide(ServerEnv.Default),
