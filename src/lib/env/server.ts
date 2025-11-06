@@ -43,8 +43,8 @@ export class ServerEnv extends Effect.Service<ServerEnv>()("@honey-pot/src/lib/e
 	}),
 }) {}
 
-export const NextPublicEnvironment = S.Config("NEXT_PUBLIC_VERCEL_ENV", Environment).pipe(
-	Config.orElse(() => Config.string(process.env.NEXT_PUBLIC_VERCEL_ENV)),
+export const NextPublicEnvironment = S.Config("VERCEL_ENV", Environment).pipe(
+	Config.orElse(() => Config.string(process.env.VERCEL_ENV)),
 	Config.orElse(() => Config.succeed(Environment.pipe(S.pickLiteral("development")).literals[0])),
 );
 
