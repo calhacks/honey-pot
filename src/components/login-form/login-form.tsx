@@ -30,8 +30,7 @@ export default function LoginForm() {
 			onSuccess: () => {
 				toast.success("Sent");
 			},
-			onError: (error) => {
-				console.error(error);
+			onError: (_error) => {
 				form.setError("email", {
 					message: "Error sending OTP. Please try again.",
 				});

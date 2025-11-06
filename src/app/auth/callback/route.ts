@@ -14,8 +14,6 @@ export const GET = async (request: NextRequest) => {
 			Effect.map((next) => (next.startsWith("/") ? next : "/")),
 		);
 
-		yield* Console.info(code, next);
-
 		return yield* Effect.match(code, {
 			onSuccess: (code) =>
 				Effect.gen(function* () {

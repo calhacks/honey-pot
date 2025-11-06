@@ -44,13 +44,13 @@ export class ServerEnv extends Effect.Service<ServerEnv>()("@honey-pot/src/lib/e
 }) {}
 
 export const NextPublicEnvironment = S.Config("NEXT_PUBLIC_VERCEL_ENV", Environment).pipe(
-	Config.withDefault(Environment.pipe(S.pickLiteral("development")).literals[0]),
+	Config.orElse(() => Config.succeed(Environment.pipe(S.pickLiteral("development")).literals[0])),
 );
 export const NextPublicGitCommitSha = S.Config("NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA", S.NonEmptyString).pipe(
-	Config.withDefault("local"),
+	Config.orElse(() => Config.succeed("local")),
 );
 export const NextPublicHost = S.Config("NEXT_PUBLIC_VERCEL_URL", S.NonEmptyString).pipe(
-	Config.withDefault("http://localhost:3000"),
+	Config.orElse(() => Config.succeed("http://localhost:3000")),
 );
 export const NextPublicSupabaseAnonKey = S.Config("NEXT_PUBLIC_SUPABASE_ANON_KEY", S.NonEmptyString).pipe(
 	Config.orElse(() =>
