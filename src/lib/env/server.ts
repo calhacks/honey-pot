@@ -7,12 +7,12 @@ export class ServerEnv extends Effect.Service<ServerEnv>()("@honey-pot/src/lib/e
 		Effect.try(() => dotenv.config({ path: ".env.local" }));
 
 		const config = yield* Config.all({
-			NextPublicEnvironment: Config.redacted(NextPublicEnvironment),
-			NextPublicGitCommitSha: Config.redacted(NextPublicGitCommitSha),
-			NextPublicHost: Config.redacted(NextPublicHost),
+			VercelEnvironment: Config.redacted(VercelEnvironment),
+			VercelGitCommitSha: Config.redacted(VercelGitCommitSha),
+			VercelHost: Config.redacted(VercelHost),
+
 			NextPublicSupabaseAnonKey: Config.redacted(NextPublicSupabaseAnonKey),
 			NextPublicSupabaseUrl: Config.redacted(NextPublicSupabaseUrl),
-
 			NextPublicVercelUrl: Config.redacted(NextPublicVercelUrl),
 
 			PostgresDatabase: Config.redacted(PostgresDatabase),
@@ -43,17 +43,17 @@ export class ServerEnv extends Effect.Service<ServerEnv>()("@honey-pot/src/lib/e
 	}),
 }) {}
 
-export const NextPublicEnvironment = S.Config("VERCEL_ENV", Environment).pipe(
-	Config.orElse(() => Config.string(process.env.VERCEL_ENV)),
+export const VercelEnvironment = S.Config("VERCEL_ENV", Environment).pipe(
 	Config.orElse(() => Config.succeed(Environment.pipe(S.pickLiteral("development")).literals[0])),
 );
 
-export const NextPublicGitCommitSha = S.Config("NEXT_PUBLIC_VERCEL_GIT_COMMIT_SHA", S.NonEmptyString).pipe(
+export const VercelGitCommitSha = S.Config("VERCEL_GIT_COMMIT_SHA", S.NonEmptyString).pipe(
 	Config.orElse(() => Config.succeed("local")),
 );
-export const NextPublicHost = S.Config("NEXT_PUBLIC_VERCEL_URL", S.NonEmptyString).pipe(
+export const VercelHost = S.Config("VERCEL_URL", S.NonEmptyString).pipe(
 	Config.orElse(() => Config.succeed("http://localhost:3000")),
 );
+
 export const NextPublicSupabaseAnonKey = S.Config("NEXT_PUBLIC_SUPABASE_ANON_KEY", S.NonEmptyString).pipe(
 	Config.orElse(() =>
 		Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)),
