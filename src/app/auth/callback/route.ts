@@ -25,9 +25,9 @@ export const GET = async (request: NextRequest) => {
 					}
 
 					const forwardedHost = yield* Effect.fromNullable(request.headers.get("x-forwarded-host"));
-					const { NextPublicEnvironment } = yield* ServerEnv;
+					const { VercelEnvironment } = yield* ServerEnv;
 
-					if (Redacted.value(NextPublicEnvironment) === "development") {
+					if (Redacted.value(VercelEnvironment) === "development") {
 						return `${origin}${next}`;
 					} else if (forwardedHost) {
 						return `${forwardedHost}${next}`;

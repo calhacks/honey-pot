@@ -10,8 +10,8 @@ export const NodeTracer = Effect.gen(function* () {
 		BetterStackOtelBearerToken,
 		BetterStackOtelServiceName,
 		BetterStackOtelTracesEndpoint,
-		NextPublicEnvironment,
-		NextPublicGitCommitSha,
+		VercelEnvironment,
+		VercelGitCommitSha,
 	} = yield* ServerEnv;
 
 	return OtlpTracer.layer({
@@ -21,8 +21,8 @@ export const NodeTracer = Effect.gen(function* () {
 		},
 		resource: {
 			serviceName: Redacted.value(BetterStackOtelServiceName),
-			serviceVersion: Redacted.value(NextPublicGitCommitSha),
-			attributes: { [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: Redacted.value(NextPublicEnvironment) },
+			serviceVersion: Redacted.value(VercelGitCommitSha),
+			attributes: { [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: Redacted.value(VercelEnvironment) },
 		},
 	}).pipe(Layer.provide(FetchHttpClient.layer));
 }).pipe(Effect.provide(ServerEnv.Default), Effect.provide(NodeFileSystem.layer), Layer.unwrapEffect);
