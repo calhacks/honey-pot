@@ -19,8 +19,7 @@ export function LoginGoogleButton(props: LoginButtonProps) {
 					onSuccess: (redirectUrl) => {
 						window.location.assign(redirectUrl);
 					},
-					onError: (error) => {
-						console.error(error);
+					onError: (_error) => {
 						toast.error("Error");
 					},
 				})
