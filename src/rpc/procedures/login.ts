@@ -9,12 +9,14 @@ export const LoginProcedures = LoginRpcs.toLayer({
 	SendMagicLink: (request) =>
 		Effect.gen(function* () {
 			const supabase = yield* SupabaseServerClient;
+			const { NextPublicVercelUrl } = yield* ServerEnv;
 
 			yield* Effect.tryPromise(() =>
 				supabase.auth.signInWithOtp({
 					email: request.email,
 					options: {
 						shouldCreateUser: true,
+						emailRedirectTo: `${Redacted.value(NextPublicVercelUrl)}/auth/confirm`,
 					},
 				}),
 			).pipe(Effect.flatMap(transformRawResultWithErrorDataToEffect));
@@ -24,6 +26,7 @@ export const LoginProcedures = LoginRpcs.toLayer({
 			Effect.withSpan("@honey-pot/src/rpc/procedures/login/LoginProcedures/SendMagicLink"),
 			Effect.tapErrorCause(Console.error),
 			Effect.provide(SupabaseServerClient.Default),
+			Effect.provide(ServerEnv.Default),
 			Effect.provide(NodeTracer),
 		),
 
