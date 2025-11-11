@@ -57,6 +57,9 @@ export const VercelHost = S.Config("VERCEL_URL", S.NonEmptyString).pipe(
 // In the case that `VERCEL_URL` is not defined, then the program is running in a preview environment.
 export const VercelUrl = Config.nonEmptyString("VERCEL_URL").pipe(
 	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.VERCEL_URL))),
+	Config.map((url) =>
+		VercelEnvironment.pipe(Effect.map((environment) => (environment === "preview" ? `https://${url}` : url))),
+	),
 );
 
 export const NextPublicSupabaseAnonKey = S.Config("NEXT_PUBLIC_SUPABASE_ANON_KEY", S.NonEmptyString).pipe(
