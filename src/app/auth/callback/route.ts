@@ -24,16 +24,7 @@ export const GET = async (request: NextRequest) => {
 						return yield* Effect.fail(error);
 					}
 
-					const forwardedHost = yield* Effect.fromNullable(request.headers.get("x-forwarded-host"));
-					const { VercelEnvironment } = yield* ServerEnv;
-
-					if (Redacted.value(VercelEnvironment) === "development") {
-						return `${origin}${next}`;
-					} else if (forwardedHost) {
-						return `${forwardedHost}${next}`;
-					} else {
-						return `${origin}${next}`;
-					}
+					return `${origin}${next}`;
 				}),
 			onFailure: () => Effect.succeed(`${origin}/login"`),
 		});
