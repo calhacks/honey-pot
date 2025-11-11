@@ -9,11 +9,10 @@ export class ServerEnv extends Effect.Service<ServerEnv>()("@honey-pot/src/lib/e
 		const config = yield* Config.all({
 			VercelEnvironment: Config.redacted(VercelEnvironment),
 			VercelGitCommitSha: Config.redacted(VercelGitCommitSha),
-			VercelHost: Config.redacted(VercelHost),
+			VercelUrl: Config.redacted(VercelUrl),
 
 			NextPublicSupabaseAnonKey: Config.redacted(NextPublicSupabaseAnonKey),
 			NextPublicSupabaseUrl: Config.redacted(NextPublicSupabaseUrl),
-			NextPublicVercelUrl: Config.redacted(NextPublicVercelUrl),
 
 			PostgresDatabase: Config.redacted(PostgresDatabase),
 			PostgresHost: Config.redacted(PostgresHost),
@@ -46,12 +45,14 @@ export class ServerEnv extends Effect.Service<ServerEnv>()("@honey-pot/src/lib/e
 export const VercelEnvironment = S.Config("VERCEL_ENV", Environment).pipe(
 	Config.orElse(() => Config.succeed(Environment.pipe(S.pickLiteral("development")).literals[0])),
 );
-
 export const VercelGitCommitSha = S.Config("VERCEL_GIT_COMMIT_SHA", S.NonEmptyString).pipe(
 	Config.orElse(() => Config.succeed("local")),
 );
-export const VercelHost = S.Config("VERCEL_URL", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed("http://localhost:3000")),
+// Vercel only exposes the preview deployment URL, so I added custom fallbacks URLs for development and production environments.
+// In the case that `VERCEL_URL` is not defined, then the program is running in a preview environment.
+export const VercelUrl = Config.nonEmptyString("VERCEL_URL").pipe(
+	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.VERCEL_URL))),
+	Config.map((url) => (url.startsWith("http") ? url : `https://${url}`)),
 );
 
 export const NextPublicSupabaseAnonKey = S.Config("NEXT_PUBLIC_SUPABASE_ANON_KEY", S.NonEmptyString).pipe(
@@ -61,11 +62,6 @@ export const NextPublicSupabaseAnonKey = S.Config("NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 export const NextPublicSupabaseUrl = S.Config("NEXT_PUBLIC_SUPABASE_URL", S.NonEmptyString).pipe(
 	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.NEXT_PUBLIC_SUPABASE_URL))),
-);
-// Vercel only exposes the preview deployment URL, so I added custom fallbacks URLs for development and production environments.
-// In the case that `VERCEL_URL` is not defined, then the program is running in a preview environment.
-export const NextPublicVercelUrl = Config.nonEmptyString("VERCEL_URL").pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.VERCEL_URL))),
 );
 
 export const PostgresDatabase = S.Config("POSTGRES_DATABASE", S.NonEmptyString).pipe(
