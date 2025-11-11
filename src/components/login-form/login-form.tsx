@@ -6,12 +6,13 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import Logo from "@/assets/images/logo.svg";
-import { LoginButton } from "@/components/login-form/login-button";
 import { LoginGoogleButton } from "@/components/login-form/login-google-button";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import { useSendMagicLink } from "@/hooks/use-login";
 
 export default function LoginForm() {
@@ -39,42 +40,49 @@ export default function LoginForm() {
 	}
 
 	return (
-		<div className="flex flex-col gap-5 sm:w-[300px]">
-			<div className="flex flex-col items-center gap-4">
+		<Card className="w-full max-w-sm">
+			<CardHeader className="place-items-center gap-4">
 				<Image src={Logo} alt="Hackathons at Berkeley logo" height={50} />
-				<span className="font-sf font-semibold sm:text-2xl text-slate-800 text-center text-balance">
+				<CardTitle className="font-sf font-semibold sm:text-2xl text-center text-balance">
 					Event Portal
-				</span>
-			</div>
+				</CardTitle>
+			</CardHeader>
 
-			<div className="flex flex-col items-center gap-2">
-				<LoginGoogleButton className="w-full" />
-			</div>
+			<CardContent className="flex flex-col gap-5">
+				<div className="flex flex-col items-center gap-2">
+					<LoginGoogleButton className="w-full" />
+				</div>
 
-			<Separator />
+				<Separator />
 
-			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3">
-					<FormField
-						control={form.control}
-						name="email"
-						render={({ field }) => (
-							<FormItem>
-								<FormLabel>Email</FormLabel>
-								<FormControl>
-									<Input placeholder="oski@berkeley.edu" {...field} />
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3">
+						<FormField
+							control={form.control}
+							name="email"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Email</FormLabel>
+									<FormControl>
+										<Input placeholder="oski@berkeley.edu" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 
-					<Button type="submit" variant="default" disabled={form.formState.isSubmitting} className="w-full">
-						Log in
-					</Button>
-				</form>
-			</Form>
-		</div>
+						<Button
+							type="submit"
+							variant="default"
+							disabled={form.formState.isSubmitting}
+							className="w-full"
+						>
+							{form.formState.isSubmitting ? <Spinner /> : "Log in"}
+						</Button>
+					</form>
+				</Form>
+			</CardContent>
+		</Card>
 	);
 }
 
