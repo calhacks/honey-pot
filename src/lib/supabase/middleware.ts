@@ -8,6 +8,14 @@ const authenticatedRoutes = Schema.Literal("/dashboard");
 export const updateSession = async (request: NextRequest) =>
 	Effect.gen(function* () {
 		let response = NextResponse.next({ request });
+		const { pathname } = request.nextUrl;
+
+		const authenticatedRoute =
+			pathname === "/" || authenticatedRoutes.literals.some((route) => route.startsWith(pathname));
+
+		if (!authenticatedRoute) {
+			return response;
+		}
 
 		const { SupabaseUrl, SupabasePublishableDefaultKey } = yield* ServerEnv;
 		const supabase = createServerClient(
@@ -30,15 +38,6 @@ export const updateSession = async (request: NextRequest) =>
 				},
 			},
 		);
-
-		const { pathname } = request.nextUrl;
-
-		const authenticatedRoute =
-			pathname === "/" || authenticatedRoutes.literals.some((route) => route.startsWith(pathname));
-
-		if (!authenticatedRoute) {
-			return response;
-		}
 
 		const user = pipe(
 			Effect.tryPromise(() => supabase.auth.getUser()),
