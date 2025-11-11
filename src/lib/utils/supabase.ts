@@ -8,7 +8,7 @@ export class SupabaseUser extends Effect.Service<SupabaseUser>()("@honey-pot/src
 		return yield* Effect.tryPromise(() => supabase.auth.getUser()).pipe(
 			Effect.flatMap(transformRawResultWithErrorDataToEffect<{ user: User }, { user: null }, AuthError>),
 			Effect.map((user) => user.user),
-			Effect.catchAll(() => new UserNotFound()),
+			Effect.orElseFail(() => new UserNotFound()),
 		);
 	}),
 	dependencies: [SupabaseServerClient.Default],

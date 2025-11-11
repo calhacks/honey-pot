@@ -1,11 +1,14 @@
 import { Cause, Effect, Exit } from "effect";
+import useSWR from "swr";
 import useSWRMutation from "swr/mutation";
 
 type EffectMutationSuccessFn<Data> = (data: Data) => void;
 type EffectMutationErrorFn<Error> = (error: Error) => void;
 
 type EffectMutationOptions<Args, Data, Error> = {
-	arg: Args & { onSuccess?: EffectMutationSuccessFn<Data>; onError?: EffectMutationErrorFn<Error> };
+	arg: Args;
+	onSuccess?: EffectMutationSuccessFn<Data>;
+	onError?: EffectMutationErrorFn<Error>;
 };
 
 export function useEffectMutationSWR<A, E, Args>(key: string, fetcher: (args: Args) => Effect.Effect<A, E>) {
@@ -15,16 +18,16 @@ export function useEffectMutationSWR<A, E, Args>(key: string, fetcher: (args: Ar
 			const result = await fetcher(options.arg).pipe(Effect.runPromiseExit);
 			return Exit.match(result, {
 				onSuccess: (value) => {
-					if (options.arg.onSuccess) {
-						options.arg.onSuccess(value);
+					if (options.onSuccess) {
+						options.onSuccess(value);
 					}
 					return value;
 				},
 				onFailure: (error) => {
-					if (options.arg.onError) {
+					if (options.onError) {
 						// `ReturnType<Cause.squash>` is always `unknown` hence cast
 						// not sure why this is; should look for alternate solution
-						options.arg.onError(Cause.squash(error) as E);
+						options.onError(Cause.squash(error) as E);
 					}
 					throw error;
 				},
@@ -32,6 +35,35 @@ export function useEffectMutationSWR<A, E, Args>(key: string, fetcher: (args: Ar
 		},
 		{
 			throwOnError: false,
+		},
+	);
+}
+
+export function useEffectSWR<A, E, Args>(key: string, fetcher: (args: Args) => Effect.Effect<A, E>) {
+	return useSWR(
+		key,
+		async (options: EffectMutationOptions<Args, A, E>) => {
+			const result = await fetcher(options.arg).pipe(Effect.runPromiseExit);
+			return Exit.match(result, {
+				onSuccess: (value) => {
+					if (options.onSuccess) {
+						options.onSuccess(value);
+					}
+					return value;
+				},
+				onFailure: (error) => {
+					if (options.onError) {
+						// `ReturnType<Cause.squash>` is always `unknown` hence cast
+						// not sure why this is; should look for alternate solution
+						options.onError(Cause.squash(error) as E);
+					}
+					throw error;
+				},
+			});
+		},
+		{
+			errorRetryCount: 3,
+			refreshInterval: 60_000,
 		},
 	);
 }
