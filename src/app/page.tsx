@@ -1,29 +1,14 @@
 "use client";
 
-import { Effect } from "effect";
-import { useEffect, useState } from "react";
-import { Rpc, rpc } from "@/rpc/client";
-import type { Profile } from "@/schema/supabase";
+import { useGetCurrentProfile } from "@/hooks/use-profile";
 
 export default function Home() {
-	const profiles = useGetAllProfiles();
+	const { data: currentProfile } = useGetCurrentProfile({ id: "136791c4-4d80-41f3-8821-ce55ac0f6e39" });
+
 	return (
 		<div>
 			<h1>Profiles</h1>
-			<pre>{JSON.stringify(profiles, null, 2)}</pre>
+			<pre>{JSON.stringify(currentProfile, null, 2)}</pre>
 		</div>
 	);
-}
-
-function useGetAllProfiles() {
-	const [profiles, setProfiles] = useState<readonly Profile.Profile[]>([]);
-
-	useEffect(() => {
-		rpc(Rpc.GetAllProfiles({})).pipe(
-			Effect.tap((result) => setProfiles(result)),
-			Effect.runPromise,
-		);
-	}, []);
-
-	return profiles;
 }

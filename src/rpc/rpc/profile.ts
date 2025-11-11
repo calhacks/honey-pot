@@ -1,5 +1,6 @@
 import { Rpc, RpcGroup } from "@effect/rpc";
 import { Schema as S } from "effect";
+import { AuthenticatedUserMiddlewareContext } from "@/rpc/middleware/context";
 import { Profile } from "@/schema/supabase";
 
 export const GetAllProfiles = Rpc.make("GetAllProfiles", {
@@ -20,7 +21,7 @@ export const GetProfileById = Rpc.make("GetProfileById", {
 	payload: S.Struct({
 		id: Profile.Profile.fields.id,
 	}),
-});
+}).middleware(AuthenticatedUserMiddlewareContext);
 
 export type GetProfileByIdSuccess = Rpc.Success<typeof GetProfileById>;
 export type GetProfileByIdError = Rpc.Error<typeof GetProfileById>;
