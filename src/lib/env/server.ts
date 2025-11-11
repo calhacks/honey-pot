@@ -10,10 +10,10 @@ export class ServerEnv extends Effect.Service<ServerEnv>()("@honey-pot/src/lib/e
 			VercelEnvironment: Config.redacted(VercelEnvironment),
 			VercelGitCommitSha: Config.redacted(VercelGitCommitSha),
 			VercelHost: Config.redacted(VercelHost),
+			VercelUrl: Config.redacted(VercelUrl),
 
 			NextPublicSupabaseAnonKey: Config.redacted(NextPublicSupabaseAnonKey),
 			NextPublicSupabaseUrl: Config.redacted(NextPublicSupabaseUrl),
-			NextPublicVercelUrl: Config.redacted(NextPublicVercelUrl),
 
 			PostgresDatabase: Config.redacted(PostgresDatabase),
 			PostgresHost: Config.redacted(PostgresHost),
@@ -53,6 +53,11 @@ export const VercelGitCommitSha = S.Config("VERCEL_GIT_COMMIT_SHA", S.NonEmptySt
 export const VercelHost = S.Config("VERCEL_URL", S.NonEmptyString).pipe(
 	Config.orElse(() => Config.succeed("http://localhost:3000")),
 );
+// Vercel only exposes the preview deployment URL, so I added custom fallbacks URLs for development and production environments.
+// In the case that `VERCEL_URL` is not defined, then the program is running in a preview environment.
+export const VercelUrl = Config.nonEmptyString("VERCEL_URL").pipe(
+	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.VERCEL_URL))),
+);
 
 export const NextPublicSupabaseAnonKey = S.Config("NEXT_PUBLIC_SUPABASE_ANON_KEY", S.NonEmptyString).pipe(
 	Config.orElse(() =>
@@ -61,11 +66,6 @@ export const NextPublicSupabaseAnonKey = S.Config("NEXT_PUBLIC_SUPABASE_ANON_KEY
 );
 export const NextPublicSupabaseUrl = S.Config("NEXT_PUBLIC_SUPABASE_URL", S.NonEmptyString).pipe(
 	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.NEXT_PUBLIC_SUPABASE_URL))),
-);
-// Vercel only exposes the preview deployment URL, so I added custom fallbacks URLs for development and production environments.
-// In the case that `VERCEL_URL` is not defined, then the program is running in a preview environment.
-export const NextPublicVercelUrl = Config.nonEmptyString("VERCEL_URL").pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.VERCEL_URL))),
 );
 
 export const PostgresDatabase = S.Config("POSTGRES_DATABASE", S.NonEmptyString).pipe(

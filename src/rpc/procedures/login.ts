@@ -9,14 +9,16 @@ export const LoginProcedures = LoginRpcs.toLayer({
 	SendMagicLink: (request) =>
 		Effect.gen(function* () {
 			const supabase = yield* SupabaseServerClient;
-			const { NextPublicVercelUrl } = yield* ServerEnv;
+			const { VercelUrl } = yield* ServerEnv;
+
+			yield* Effect.annotateCurrentSpan({ vercelUrl: Redacted.value(VercelUrl) });
 
 			yield* Effect.tryPromise(() =>
 				supabase.auth.signInWithOtp({
 					email: request.email,
 					options: {
 						shouldCreateUser: true,
-						emailRedirectTo: `${Redacted.value(NextPublicVercelUrl)}/auth/confirm`,
+						emailRedirectTo: `${Redacted.value(VercelUrl)}/auth/confirm`,
 					},
 				}),
 			).pipe(Effect.flatMap(transformRawResultWithErrorDataToEffect));
@@ -33,13 +35,13 @@ export const LoginProcedures = LoginRpcs.toLayer({
 	GoogleOAuthLogin: () =>
 		Effect.gen(function* () {
 			const supabase = yield* SupabaseServerClient;
-			const { NextPublicVercelUrl } = yield* ServerEnv;
+			const { VercelUrl } = yield* ServerEnv;
 
 			const { data, error } = yield* Effect.tryPromise(() =>
 				supabase.auth.signInWithOAuth({
 					provider: "google",
 					options: {
-						redirectTo: `${Redacted.value(NextPublicVercelUrl)}/auth/callback`,
+						redirectTo: `${Redacted.value(VercelUrl)}/auth/callback`,
 					},
 				}),
 			);
