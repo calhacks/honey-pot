@@ -18,7 +18,7 @@ export const LoginProcedures = LoginRpcs.toLayer({
 					email: request.email,
 					options: {
 						shouldCreateUser: true,
-						emailRedirectTo: `${Redacted.value(VercelUrl)}/auth/confirm`,
+						emailRedirectTo: `${Redacted.value(VercelUrl)}`,
 					},
 				}),
 			).pipe(Effect.flatMap(transformRawResultWithErrorDataToEffect));
