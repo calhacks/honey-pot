@@ -18,12 +18,12 @@ export const LoginProcedures = LoginRpcs.toLayer({
 					email: request.email,
 					options: {
 						shouldCreateUser: true,
-						emailRedirectTo: `${Redacted.value(VercelUrl)}`,
+						emailRedirectTo: `${Redacted.value(VercelUrl)}/auth/confirm`,
 					},
 				}),
 			).pipe(Effect.flatMap(transformRawResultWithErrorDataToEffect));
 
-			return undefined;
+			return void 0;
 		}).pipe(
 			Effect.withSpan("@honey-pot/src/rpc/procedures/login/LoginProcedures/SendMagicLink"),
 			Effect.tapErrorCause(Console.error),
