@@ -1,4 +1,4 @@
-import { Console, Effect, Redacted, Schema as S } from "effect";
+import { Effect, Schema as S } from "effect";
 import { type NextRequest, NextResponse } from "next/server";
 import { ServerEnv } from "@/lib/env/server";
 import { SupabaseServerClient } from "@/lib/supabase/client";
