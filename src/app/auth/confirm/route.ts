@@ -1,7 +1,7 @@
 import { Effect, Schema as S } from "effect";
 import { redirect } from "next/navigation";
 import type { NextRequest } from "next/server";
-import { SupabaseServerClient } from "@/lib/supabase/client";
+import { SupabaseServerClient } from "@/lib/supabase/client/server";
 import { NodeTracer } from "@/lib/tracing/spans";
 
 const SupabaseEmailOtpType = S.Literal("signup", "invite", "magiclink", "recovery", "email_change", "email");

@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import { Config, Effect, Schema as S } from "effect";
+import { Config, Effect, Schema } from "effect";
 import { Environment } from "@/schema/meta";
 
 export class ServerEnv extends Effect.Service<ServerEnv>()("@honey-pot/src/lib/env/server/ServerEnv", {
@@ -42,106 +42,90 @@ export class ServerEnv extends Effect.Service<ServerEnv>()("@honey-pot/src/lib/e
 	}),
 }) {}
 
-export const VercelEnvironment = S.Config("VERCEL_ENV", Environment).pipe(
-	Config.orElse(() => Config.succeed(Environment.pipe(S.pickLiteral("development")).literals[0])),
+export const VercelEnvironment = Schema.Config("VERCEL_ENV", Environment).pipe(
+	Config.orElse(() => Config.succeed(Environment.pipe(Schema.pickLiteral("development")).literals[0])),
 );
-export const VercelGitCommitSha = S.Config("VERCEL_GIT_COMMIT_SHA", S.NonEmptyString).pipe(
+export const VercelGitCommitSha = Config.nonEmptyString("VERCEL_GIT_COMMIT_SHA").pipe(
 	Config.orElse(() => Config.succeed("local")),
 );
 // Vercel only exposes the preview deployment URL, so I added custom fallbacks URLs for development and production environments.
 // In the case that `VERCEL_URL` is not defined, then the program is running in a preview environment.
 export const VercelUrl = Config.nonEmptyString("VERCEL_URL").pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.VERCEL_URL))),
+	Config.orElse(() => Config.nonEmptyString(process.env.VERCEL_URL)),
 	Config.map((url) => (url.startsWith("http") ? url : `https://${url}`)),
 );
 
-export const NextPublicSupabaseAnonKey = S.Config("NEXT_PUBLIC_SUPABASE_ANON_KEY", S.NonEmptyString).pipe(
-	Config.orElse(() =>
-		Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)),
-	),
+export const NextPublicSupabaseAnonKey = Config.nonEmptyString("NEXT_PUBLIC_SUPABASE_ANON_KEY").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)),
 );
-export const NextPublicSupabaseUrl = S.Config("NEXT_PUBLIC_SUPABASE_URL", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.NEXT_PUBLIC_SUPABASE_URL))),
+export const NextPublicSupabaseUrl = Config.nonEmptyString("NEXT_PUBLIC_SUPABASE_URL").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.NEXT_PUBLIC_SUPABASE_URL)),
 );
 
-export const PostgresDatabase = S.Config("POSTGRES_DATABASE", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.POSTGRES_DATABASE))),
+export const PostgresDatabase = Config.nonEmptyString("POSTGRES_DATABASE").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.POSTGRES_DATABASE)),
 );
-export const PostgresHost = S.Config("POSTGRES_HOST", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.POSTGRES_HOST))),
+export const PostgresHost = Config.nonEmptyString("POSTGRES_HOST").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.POSTGRES_HOST)),
 );
-export const PostgresPassword = S.Config("POSTGRES_PASSWORD", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.POSTGRES_PASSWORD))),
+export const PostgresPassword = Config.nonEmptyString("POSTGRES_PASSWORD").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.POSTGRES_PASSWORD)),
 );
-export const PostgresPrismaUrl = S.Config("POSTGRES_PRISMA_URL", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.POSTGRES_PRISMA_URL))),
+export const PostgresPrismaUrl = Config.nonEmptyString("POSTGRES_PRISMA_URL").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.POSTGRES_PRISMA_URL)),
 );
-export const PostgresUrlNonPooling = S.Config("POSTGRES_URL_NON_POOLING", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.POSTGRES_URL_NON_POOLING))),
+export const PostgresUrlNonPooling = Config.nonEmptyString("POSTGRES_URL_NON_POOLING").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.POSTGRES_URL_NON_POOLING)),
 );
-export const PostgresUser = S.Config("POSTGRES_USER", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.POSTGRES_USER))),
-);
-
-export const SupabaseAnonKey = S.Config("SUPABASE_ANON_KEY", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.SUPABASE_ANON_KEY))),
-);
-export const SupabaseJwtSecret = S.Config("SUPABASE_JWT_SECRET", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.SUPABASE_JWT_SECRET))),
-);
-export const SupabasePublishableDefaultKey = S.Config("SUPABASE_PUBLISHABLE_DEFAULT_KEY", S.NonEmptyString).pipe(
-	Config.orElse(() =>
-		Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.SUPABASE_PUBLISHABLE_DEFAULT_KEY)),
-	),
-);
-export const SupabaseSecretDefaultKey = S.Config("SUPABASE_SECRET_DEFAULT_KEY", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.SUPABASE_SECRET_DEFAULT_KEY))),
-);
-export const SupabaseServiceRoleKey = S.Config("SUPABASE_SERVICE_ROLE_KEY", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.SUPABASE_SERVICE_ROLE_KEY))),
-);
-export const SupabaseUrl = S.Config("SUPABASE_URL", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.SUPABASE_URL))),
+export const PostgresUser = Config.nonEmptyString("POSTGRES_USER").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.POSTGRES_USER)),
 );
 
-export const VercelOidcToken = S.Config("VERCEL_OIDC_TOKEN", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.VERCEL_OIDC_TOKEN))),
+export const SupabaseAnonKey = Config.nonEmptyString("SUPABASE_ANON_KEY").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.SUPABASE_ANON_KEY)),
+);
+export const SupabaseJwtSecret = Config.nonEmptyString("SUPABASE_JWT_SECRET").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.SUPABASE_JWT_SECRET)),
+);
+export const SupabasePublishableDefaultKey = Config.nonEmptyString("SUPABASE_PUBLISHABLE_DEFAULT_KEY").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.SUPABASE_PUBLISHABLE_DEFAULT_KEY)),
+);
+export const SupabaseSecretDefaultKey = Config.nonEmptyString("SUPABASE_SECRET_DEFAULT_KEY").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.SUPABASE_SECRET_DEFAULT_KEY)),
+);
+export const SupabaseServiceRoleKey = Config.nonEmptyString("SUPABASE_SERVICE_ROLE_KEY").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.SUPABASE_SERVICE_ROLE_KEY)),
+);
+export const SupabaseUrl = Config.nonEmptyString("SUPABASE_URL").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.SUPABASE_URL)),
 );
 
-export const BetterStackOtelBearerToken = S.Config("BETTER_STACK_OTEL_BEARER_TOKEN", S.NonEmptyString).pipe(
-	Config.orElse(() =>
-		Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.BETTER_STACK_OTEL_BEARER_TOKEN)),
-	),
-);
-export const BetterStackOtelCompression = S.Config("BETTER_STACK_OTEL_COMPRESSION", S.NonEmptyString).pipe(
-	Config.orElse(() =>
-		Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.BETTER_STACK_OTEL_COMPRESSION)),
-	),
-);
-export const BetterStackOtelLogsEndpoint = S.Config("BETTER_STACK_OTEL_LOGS_ENDPOINT", S.NonEmptyString).pipe(
-	Config.orElse(() =>
-		Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.BETTER_STACK_OTEL_LOGS_ENDPOINT)),
-	),
-);
-export const BetterStackOtelMetricsEndpoint = S.Config("BETTER_STACK_OTEL_METRICS_ENDPOINT", S.NonEmptyString).pipe(
-	Config.orElse(() =>
-		Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.BETTER_STACK_OTEL_METRICS_ENDPOINT)),
-	),
-);
-export const BetterStackOtelServiceName = S.Config("BETTER_STACK_OTEL_SERVICE_NAME", S.NonEmptyString).pipe(
-	Config.orElse(() =>
-		Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.BETTER_STACK_OTEL_SERVICE_NAME)),
-	),
-);
-export const BetterStackOtelTracesEndpoint = S.Config("BETTER_STACK_OTEL_TRACES_ENDPOINT", S.NonEmptyString).pipe(
-	Config.orElse(() =>
-		Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.BETTER_STACK_OTEL_TRACES_ENDPOINT)),
-	),
+export const VercelOidcToken = Config.nonEmptyString("VERCEL_OIDC_TOKEN").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.VERCEL_OIDC_TOKEN)),
 );
 
-export const GoogleClientId = S.Config("GOOGLE_CLIENT_ID", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.GOOGLE_CLIENT_ID))),
+export const BetterStackOtelBearerToken = Config.nonEmptyString("BETTER_STACK_OTEL_BEARER_TOKEN").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.BETTER_STACK_OTEL_BEARER_TOKEN)),
 );
-export const GoogleClientSecret = S.Config("GOOGLE_CLIENT_SECRET", S.NonEmptyString).pipe(
-	Config.orElse(() => Config.succeed(S.decodeUnknownSync(S.NonEmptyString)(process.env.GOOGLE_CLIENT_SECRET))),
+export const BetterStackOtelCompression = Config.nonEmptyString("BETTER_STACK_OTEL_COMPRESSION").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.BETTER_STACK_OTEL_COMPRESSION)),
+);
+export const BetterStackOtelLogsEndpoint = Config.nonEmptyString("BETTER_STACK_OTEL_LOGS_ENDPOINT").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.BETTER_STACK_OTEL_LOGS_ENDPOINT)),
+);
+export const BetterStackOtelMetricsEndpoint = Config.nonEmptyString("BETTER_STACK_OTEL_METRICS_ENDPOINT").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.BETTER_STACK_OTEL_METRICS_ENDPOINT)),
+);
+export const BetterStackOtelServiceName = Config.nonEmptyString("BETTER_STACK_OTEL_SERVICE_NAME").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.BETTER_STACK_OTEL_SERVICE_NAME)),
+);
+export const BetterStackOtelTracesEndpoint = Config.nonEmptyString("BETTER_STACK_OTEL_TRACES_ENDPOINT").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.BETTER_STACK_OTEL_TRACES_ENDPOINT)),
+);
+
+export const GoogleClientId = Config.nonEmptyString("GOOGLE_CLIENT_ID").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.GOOGLE_CLIENT_ID)),
+);
+export const GoogleClientSecret = Config.nonEmptyString("GOOGLE_CLIENT_SECRET").pipe(
+	Config.orElse(() => Config.nonEmptyString(process.env.GOOGLE_CLIENT_SECRET)),
 );
