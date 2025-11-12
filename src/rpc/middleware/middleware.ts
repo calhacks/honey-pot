@@ -1,5 +1,5 @@
 import { Console, Effect, Layer, Schema } from "effect";
-import { SupabaseServerClient } from "@/lib/supabase/client";
+import { SupabaseServerClient } from "@/lib/supabase/client/server";
 import { SupabaseUser } from "@/lib/utils/supabase";
 import { BadGateway, Forbidden, InternalServerError, NotFound } from "@/schema/http";
 import { Profile } from "@/schema/supabase";

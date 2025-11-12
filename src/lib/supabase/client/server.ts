@@ -5,7 +5,7 @@ import { ServerEnv } from "@/lib/env/server";
 import type { Database } from "@/lib/supabase/database.types";
 
 export class SupabaseServerClient extends Effect.Service<SupabaseServerClient>()(
-	"@honey-pot/src/lib/supabase/client/SupabaseServerClient",
+	"@honey-pot/src/lib/supabase/client/server/SupabaseServerClient",
 	{
 		effect: Effect.gen(function* () {
 			const { SupabaseUrl, SupabasePublishableDefaultKey } = yield* ServerEnv;
@@ -24,6 +24,7 @@ export class SupabaseServerClient extends Effect.Service<SupabaseServerClient>()
 					},
 				},
 			);
+
 			return supabaseClient;
 		}).pipe(Effect.provide(ServerEnv.Default), Effect.tapErrorCause(Console.error)),
 	},

@@ -1,5 +1,5 @@
 import { Console, Effect, Schema as S } from "effect";
-import { SupabaseServerClient } from "@/lib/supabase/client";
+import { SupabaseServerClient } from "@/lib/supabase/client/server";
 import { NodeTracer } from "@/lib/tracing/spans";
 import { SupabaseUser, transformRawResultToEffect } from "@/lib/utils/supabase";
 import { ProfileRpcs } from "@/rpc/rpc/profile";

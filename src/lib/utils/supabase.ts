@@ -1,6 +1,6 @@
 import type { AuthError, User } from "@supabase/supabase-js";
 import { Data, Effect } from "effect";
-import { SupabaseServerClient } from "@/lib/supabase/client";
+import { SupabaseServerClient } from "@/lib/supabase/client/server";
 
 export class SupabaseUser extends Effect.Service<SupabaseUser>()("@honey-pot/src/lib/utils/supabase/SupabaseUser", {
 	effect: Effect.gen(function* () {

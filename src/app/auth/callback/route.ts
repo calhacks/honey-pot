@@ -1,7 +1,7 @@
 import { Effect, Schema as S } from "effect";
 import { type NextRequest, NextResponse } from "next/server";
 import { ServerEnv } from "@/lib/env/server";
-import { SupabaseServerClient } from "@/lib/supabase/client";
+import { SupabaseServerClient } from "@/lib/supabase/client/server";
 import { NodeTracer } from "@/lib/tracing/spans";
 
 export const GET = async (request: NextRequest) => {
