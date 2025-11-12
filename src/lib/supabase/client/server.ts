@@ -24,6 +24,7 @@ export class SupabaseServerClient extends Effect.Service<SupabaseServerClient>()
 					},
 				},
 			);
+
 			return supabaseClient;
 		}).pipe(Effect.provide(ServerEnv.Default), Effect.tapErrorCause(Console.error)),
 	},
