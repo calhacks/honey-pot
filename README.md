@@ -1,6 +1,6 @@
 # honey-pot
 
-Internal (and slightly external) dashboard to for [Hackathons @ Berkeley](https://hackberkeley.org/) and our [events](https://calhacks.io/).
+Event dashboard for [Hackathons @ Berkeley](https://hackberkeley.org/).
 
 ## Setup
 
@@ -12,7 +12,7 @@ Follow the instructions on [`pnpm.io`](https://pnpm.io/), or install using cURL
 curl -fsSL https://get.pnpm.io/install.sh | sh -
 ```
 
-### Clone `honey-pot`'s Dev Branch & Dependencies
+### Clone `honey-pot`'s `dev` Branch & Dependencies
 
 ```bash
 git clone git@github.com:calhacks/honey-pot.git -b dev
@@ -30,7 +30,7 @@ Y
 ❯ Hackathons at Berkeley
 # ? Found project “hackathons-at-berkeley/honey-pot”. Link to it? (Y/n)
 Y
-pnpx vercel env pull .env.development.local
+pnpx vercel env pull .env.local
 ```
 
 ### Supabase
@@ -60,4 +60,4 @@ We will (probably) migrate to [Oxc Formatter](https://github.com/oxc-project/oxc
 
 ## Contributing
 
-Make sure to follow all the steps in [development](#development).
+Make sure to follow all the steps [here](#setup).
