@@ -1,4 +1,5 @@
 import { Console, Effect, Schema as S } from "effect";
+import { ServerEnv } from "@/lib/env/server";
 import { SupabaseServerClient } from "@/lib/supabase/client/server";
 import { NodeTracer } from "@/lib/tracing/spans";
 import { SupabaseUser, transformRawResultToEffect } from "@/lib/utils/supabase";
@@ -18,8 +19,9 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
 			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/GetAllProfiles"),
-			Effect.provide(SupabaseServerClient.Default),
+			Effect.provide(SupabaseServerClient.Live),
 			Effect.provide(SupabaseUser.Default),
+			Effect.provide(ServerEnv.Live),
 			Effect.provide(NodeTracer),
 		),
 
@@ -35,7 +37,8 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
 			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/GetProfileById"),
-			Effect.provide(SupabaseServerClient.Default),
+			Effect.provide(SupabaseServerClient.Live),
+			Effect.provide(ServerEnv.Live),
 			Effect.provide(NodeTracer),
 		),
 
@@ -52,7 +55,8 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
 			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/CreateProfile"),
-			Effect.provide(SupabaseServerClient.Default),
+			Effect.provide(SupabaseServerClient.Live),
+			Effect.provide(ServerEnv.Live),
 			Effect.provide(NodeTracer),
 		),
 
@@ -69,7 +73,8 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
 			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/UpdateProfile"),
-			Effect.provide(SupabaseServerClient.Default),
+			Effect.provide(SupabaseServerClient.Live),
+			Effect.provide(ServerEnv.Live),
 			Effect.provide(NodeTracer),
 		),
 
@@ -88,7 +93,8 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
 			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/DeleteProfile"),
-			Effect.provide(SupabaseServerClient.Default),
+			Effect.provide(SupabaseServerClient.Live),
+			Effect.provide(ServerEnv.Live),
 			Effect.provide(NodeTracer),
 		),
 });

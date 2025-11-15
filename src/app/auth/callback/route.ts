@@ -33,8 +33,8 @@ export const GET = async (request: NextRequest) => {
 		Effect.catchAll(() => Effect.succeed(`${origin}/login"`)),
 
 		Effect.withSpan("@honey-pot/src/app/auth/callback/route/GET"),
-		Effect.provide(ServerEnv.Default),
-		Effect.provide(SupabaseServerClient.Default),
+		Effect.provide(SupabaseServerClient.Live),
+		Effect.provide(ServerEnv.Live),
 		Effect.provide(NodeTracer),
 		Effect.runPromise,
 	);

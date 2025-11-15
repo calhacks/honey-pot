@@ -1,6 +1,7 @@
 import { Effect, Schema as S } from "effect";
 import { redirect } from "next/navigation";
 import type { NextRequest } from "next/server";
+import { ServerEnv } from "@/lib/env/server";
 import { SupabaseServerClient } from "@/lib/supabase/client/server";
 import { NodeTracer } from "@/lib/tracing/spans";
 
@@ -32,7 +33,12 @@ export const GET = async (request: NextRequest) => {
 		}
 
 		return "/login";
-	}).pipe(Effect.provide(SupabaseServerClient.Default), Effect.provide(NodeTracer), Effect.runPromise);
+	}).pipe(
+		Effect.provide(SupabaseServerClient.Live),
+		Effect.provide(ServerEnv.Live),
+		Effect.provide(NodeTracer),
+		Effect.runPromise,
+	);
 
 	return redirect(redirectUrl);
 };

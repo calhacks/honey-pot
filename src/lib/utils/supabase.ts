@@ -11,7 +11,7 @@ export class SupabaseUser extends Effect.Service<SupabaseUser>()("@honey-pot/src
 			Effect.orElseFail(() => new UserNotFound()),
 		);
 	}),
-	dependencies: [SupabaseServerClient.Default],
+	dependencies: [SupabaseServerClient.Live],
 }) {}
 
 export class UserNotFound extends Data.TaggedError("UserNotFound") {}
