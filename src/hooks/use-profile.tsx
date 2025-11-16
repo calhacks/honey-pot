@@ -1,5 +1,5 @@
 import { useEffectSWR } from "@/hooks/use-effect-swr";
-import { Rpc, rpc } from "@/rpc/client";
+import { Rpc, rpc } from "@/rpc/client/browser";
 import type { GetProfileByIdPayload } from "@/rpc/rpc/profile";
 
 const UseGetCurrentProfileKey = "use-get-current-profile";

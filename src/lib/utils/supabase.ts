@@ -1,50 +1,25 @@
-import type { AuthError, User } from "@supabase/supabase-js";
-import { Data, Effect } from "effect";
+import { Data, Effect, pipe } from "effect";
 import { SupabaseServerClient } from "@/lib/supabase/client/server";
+import { BadGateway } from "@/schema/http";
 
 export class SupabaseUser extends Effect.Service<SupabaseUser>()("@honey-pot/src/lib/utils/supabase/SupabaseUser", {
+	dependencies: [SupabaseServerClient.Live],
+
 	effect: Effect.gen(function* () {
 		const supabase = yield* SupabaseServerClient;
-		return yield* Effect.tryPromise(() => supabase.auth.getUser()).pipe(
-			Effect.flatMap(transformRawResultWithErrorDataToEffect<{ user: User }, { user: null }, AuthError>),
-			Effect.map((user) => user.user),
-			Effect.orElseFail(() => new UserNotFound()),
+
+		return yield* pipe(
+			Effect.tryPromise({
+				try: () => supabase.auth.getUser(),
+				catch: () => BadGateway.make({ message: "Failed to get user" }),
+			}),
+			Effect.filterOrFail(
+				(response) => response.error === null,
+				(response) => new UserNotFound({ message: response.error.message }),
+			),
+			Effect.map(({ data }) => data.user),
 		);
 	}),
-	dependencies: [SupabaseServerClient.Default],
 }) {}
 
-export class UserNotFound extends Data.TaggedError("UserNotFound") {}
-
-export type RawResult<TData, TError> =
-	| {
-			data: TData;
-			error: null;
-	  }
-	| {
-			data: null;
-			error: TError;
-	  };
-
-export type RawResultWithErrorData<TData, TErrorData, TError> =
-	| {
-			data: TData;
-			error: null;
-	  }
-	| {
-			data: TErrorData;
-			error: TError;
-	  };
-
-export const transformRawResultToEffect = <TData, TError>(input: RawResult<TData, TError>) =>
-	((result: RawResult<TData, TError>): result is { data: TData; error: null } => result.error === null)(input)
-		? Effect.succeed(input.data)
-		: Effect.fail(input.error);
-
-export const transformRawResultWithErrorDataToEffect = <TData, TErrorData, TError>(
-	input: RawResultWithErrorData<TData, TErrorData, TError>,
-) =>
-	((result: RawResultWithErrorData<TData, TErrorData, TError>): result is { data: TData; error: null } =>
-		result.error === null)(input)
-		? Effect.succeed(input.data)
-		: Effect.fail(input.error);
+export class UserNotFound extends Data.TaggedError("UserNotFound")<{ message?: string }> {}

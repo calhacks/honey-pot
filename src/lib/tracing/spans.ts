@@ -25,4 +25,4 @@ export const NodeTracer = Effect.gen(function* () {
 			attributes: { [ATTR_DEPLOYMENT_ENVIRONMENT_NAME]: Redacted.value(VercelEnvironment) },
 		},
 	}).pipe(Layer.provide(FetchHttpClient.layer));
-}).pipe(Effect.provide(ServerEnv.Default), Effect.provide(NodeFileSystem.layer), Layer.unwrapEffect);
+}).pipe(Effect.provide(ServerEnv.Live), Effect.provide(NodeFileSystem.layer), Layer.unwrapEffect);

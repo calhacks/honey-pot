@@ -1,4 +1,4 @@
-import { Effect, Schema as S } from "effect";
+import { Effect, Schema } from "effect";
 import { type NextRequest, NextResponse } from "next/server";
 import { ServerEnv } from "@/lib/env/server";
 import { SupabaseServerClient } from "@/lib/supabase/client/server";
@@ -7,9 +7,9 @@ import { NodeTracer } from "@/lib/tracing/spans";
 export const GET = async (request: NextRequest) => {
 	const redirectUrl = await Effect.gen(function* () {
 		const { searchParams, origin } = new URL(request.url);
-		const code = S.decodeUnknown(S.NonEmptyString)(searchParams.get("code"));
+		const code = Schema.decodeUnknown(Schema.NonEmptyString)(searchParams.get("code"));
 
-		const next = yield* S.decodeUnknown(S.NonEmptyString)(searchParams.get("next")).pipe(
+		const next = yield* Schema.decodeUnknown(Schema.NonEmptyString)(searchParams.get("next")).pipe(
 			Effect.orElseSucceed(() => "/"),
 			Effect.map((next) => (next.startsWith("/") ? next : "/")),
 		);
@@ -29,12 +29,13 @@ export const GET = async (request: NextRequest) => {
 			onFailure: () => Effect.succeed(`${origin}/login"`),
 		});
 	}).pipe(
+		Effect.withSpan("@honey-pot/src/app/auth/callback/route/GET"),
+
 		Effect.flatten,
 		Effect.catchAll(() => Effect.succeed(`${origin}/login"`)),
 
-		Effect.withSpan("@honey-pot/src/app/auth/callback/route/GET"),
-		Effect.provide(ServerEnv.Default),
-		Effect.provide(SupabaseServerClient.Default),
+		Effect.provide(SupabaseServerClient.Live),
+		Effect.provide(ServerEnv.Live),
 		Effect.provide(NodeTracer),
 		Effect.runPromise,
 	);

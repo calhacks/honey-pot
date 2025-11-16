@@ -61,6 +61,6 @@ export const updateSession = async (request: NextRequest) =>
 	}).pipe(
 		// Not sure if it's beneficial to have tracing in middleware (bloats traces)
 		// Effect.withSpan("@honey-pot/src/lib/supabase/middleware/updateSession"),
-		Effect.provide(ServerEnv.Default),
+		Effect.provide(ServerEnv.Live),
 		Effect.runPromise,
 	);
