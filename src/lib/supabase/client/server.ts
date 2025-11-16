@@ -1,5 +1,5 @@
 import { type CookieOptions, createServerClient } from "@supabase/ssr";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import { Context, Effect, Layer, Redacted } from "effect";
 import { cookies } from "next/headers";
 import { ServerEnv } from "@/lib/env/server";
@@ -29,6 +29,22 @@ export class SupabaseServerClient extends Context.Tag("@honey-pot/src/lib/supaba
 							}),
 					},
 				},
+			);
+
+			return supabaseClient;
+		}),
+	);
+
+	// There should be almost no reason to use this client except for testing.
+	static Admin = Layer.effect(
+		SupabaseServerClient,
+		Effect.gen(function* () {
+			const { SupabaseUrl, SupabaseSecretDefaultKey } = yield* ServerEnv;
+
+			const supabaseClient = createClient<Database>(
+				Redacted.value(SupabaseUrl),
+				Redacted.value(SupabaseSecretDefaultKey),
+				{ auth: { persistSession: false, autoRefreshToken: false } },
 			);
 
 			return supabaseClient;

@@ -1,13 +1,13 @@
 import { Rpc, RpcGroup } from "@effect/rpc";
-import { Schema as S } from "effect";
+import { Schema } from "effect";
 import { AuthenticatedUserMiddlewareContext } from "@/rpc/middleware/context";
 import { Profile } from "@/schema/supabase";
 
 export const GetAllProfiles = Rpc.make("GetAllProfiles", {
-	success: S.Array(Profile.Profile),
+	success: Schema.Array(Profile),
 	// TODO: proper failure types
-	error: S.Unknown,
-	payload: S.Struct({}),
+	error: Schema.Unknown,
+	payload: Schema.Struct({}),
 });
 
 export type GetAllProfilesSuccess = Rpc.Success<typeof GetAllProfiles>;
@@ -15,11 +15,11 @@ export type GetAllProfilesError = Rpc.Error<typeof GetAllProfiles>;
 export type GetAllProfilesPayload = Rpc.Payload<typeof GetAllProfiles>;
 
 export const GetProfileById = Rpc.make("GetProfileById", {
-	success: Profile.Profile,
+	success: Profile,
 	// TODO: proper failure types
-	error: S.Unknown,
-	payload: S.Struct({
-		id: Profile.Profile.fields.id,
+	error: Schema.Unknown,
+	payload: Schema.Struct({
+		id: Profile.fields.id,
 	}),
 }).middleware(AuthenticatedUserMiddlewareContext);
 
@@ -28,25 +28,23 @@ export type GetProfileByIdError = Rpc.Error<typeof GetProfileById>;
 export type GetProfileByIdPayload = Rpc.Payload<typeof GetProfileById>;
 
 export const CreateProfile = Rpc.make("CreateProfile", {
-	success: Profile.Profile,
+	success: Profile,
 	// TODO: proper failure types
-	error: S.Unknown,
-	payload: S.Struct({
-		user_id: Profile.Profile.fields.user_id,
-		created_at: Profile.Profile.fields.created_at,
-		updated_at: Profile.Profile.fields.updated_at,
-		role: Profile.Profile.fields.role,
-		avatar_url: Profile.Profile.fields.avatar_url,
+	error: Schema.Unknown,
+	payload: Schema.Struct({
+		user_id: Profile.fields.user_id,
+		role: Profile.fields.role,
+		avatar_url: Profile.fields.avatar_url,
 	}),
 });
 
 export const UpdateProfile = Rpc.make("UpdateProfile", {
-	success: Profile.Profile,
+	success: Profile,
 	// TODO: proper failure types
-	error: S.Unknown,
-	payload: S.Struct({
-		role: S.optional(Profile.Profile.fields.role),
-		avatar_url: S.NullishOr(Profile.Profile.fields.avatar_url),
+	error: Schema.Unknown,
+	payload: Schema.Struct({
+		role: Schema.optionalWith(Profile.fields.role, { exact: true }),
+		avatar_url: Schema.optionalWith(Profile.fields.avatar_url, { exact: true }),
 	}),
 });
 
@@ -55,11 +53,11 @@ export type UpdateProfileError = Rpc.Error<typeof UpdateProfile>;
 export type UpdateProfilePayload = Rpc.Payload<typeof UpdateProfile>;
 
 export const DeleteProfile = Rpc.make("DeleteProfile", {
-	success: S.Undefined,
+	success: Schema.Undefined,
 	// TODO: proper failure types
-	error: S.Unknown,
-	payload: S.Struct({
-		id: Profile.Profile.fields.id,
+	error: Schema.Unknown,
+	payload: Schema.Struct({
+		id: Profile.fields.id,
 	}),
 });
 

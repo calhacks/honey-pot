@@ -5,7 +5,7 @@ import { RpcClient, RpcSerialization } from "@effect/rpc";
 import { Effect, Layer } from "effect";
 import { Rpcs } from "@/rpc/rpc";
 
-export const ProtocolLive = RpcClient.layerProtocolHttp({
+const ProtocolLive = RpcClient.layerProtocolHttp({
 	url: "/api/rpc",
 }).pipe(Layer.provide([FetchHttpClient.layer, RpcSerialization.layerJson]));
 

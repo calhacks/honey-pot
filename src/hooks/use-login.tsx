@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffectMutationSWR } from "@/hooks/use-effect-swr";
-import { Rpc, rpc } from "@/rpc/client";
+import { Rpc, rpc } from "@/rpc/client/browser";
 import type { GoogleOAuthLoginPayload, SendMagicLinkPayload } from "@/rpc/rpc/login";
 
 const UseSendMagicLinkKey = "use-send-magic-link";

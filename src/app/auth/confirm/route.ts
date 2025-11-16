@@ -1,11 +1,11 @@
-import { Effect, Schema as S } from "effect";
+import { Effect, Schema } from "effect";
 import { redirect } from "next/navigation";
 import type { NextRequest } from "next/server";
 import { ServerEnv } from "@/lib/env/server";
 import { SupabaseServerClient } from "@/lib/supabase/client/server";
 import { NodeTracer } from "@/lib/tracing/spans";
 
-const SupabaseEmailOtpType = S.Literal("signup", "invite", "magiclink", "recovery", "email_change", "email");
+const SupabaseEmailOtpType = Schema.Literal("signup", "invite", "magiclink", "recovery", "email_change", "email");
 
 export const GET = async (request: NextRequest) => {
 	const redirectUrl = await Effect.gen(function* () {
@@ -13,7 +13,7 @@ export const GET = async (request: NextRequest) => {
 
 		const tokenHash = yield* Effect.fromNullable(searchParams.get("token_hash"));
 		const type = yield* Effect.fromNullable(searchParams.get("type")).pipe(
-			Effect.flatMap(S.decodeUnknown(SupabaseEmailOtpType)),
+			Effect.flatMap(Schema.decodeUnknown(SupabaseEmailOtpType)),
 		);
 		const next = yield* Effect.fromNullable(searchParams.get("next")).pipe(Effect.orElseSucceed(() => "/"));
 

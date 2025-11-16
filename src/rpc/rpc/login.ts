@@ -1,11 +1,11 @@
 import { Rpc, RpcGroup } from "@effect/rpc";
-import { Schema as S } from "effect";
+import { Schema } from "effect";
 
 export const SendMagicLink = Rpc.make("SendMagicLink", {
-	success: S.Undefined,
-	error: S.Unknown,
-	payload: S.Struct({
-		email: S.String,
+	success: Schema.Undefined,
+	error: Schema.Unknown,
+	payload: Schema.Struct({
+		email: Schema.String,
 	}),
 });
 
@@ -14,9 +14,9 @@ export type SendMagicLinkError = Rpc.Error<typeof SendMagicLink>;
 export type SendMagicLinkPayload = Rpc.Payload<typeof SendMagicLink>;
 
 export const GoogleOAuthLogin = Rpc.make("GoogleOAuthLogin", {
-	success: S.String,
-	error: S.Unknown,
-	payload: S.Struct({}),
+	success: Schema.String,
+	error: Schema.Unknown,
+	payload: Schema.Struct({}),
 });
 
 export type GoogleOAuthLoginSuccess = Rpc.Success<typeof GoogleOAuthLogin>;

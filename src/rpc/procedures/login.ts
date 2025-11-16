@@ -1,8 +1,7 @@
-import { Console, Effect, Redacted } from "effect";
+import { Console, Effect, pipe, Redacted } from "effect";
 import { ServerEnv } from "@/lib/env/server";
 import { SupabaseServerClient } from "@/lib/supabase/client/server";
 import { NodeTracer } from "@/lib/tracing/spans";
-import { transformRawResultWithErrorDataToEffect } from "@/lib/utils/supabase";
 import { LoginRpcs } from "@/rpc/rpc/login";
 
 export const LoginProcedures = LoginRpcs.toLayer({
@@ -11,19 +10,22 @@ export const LoginProcedures = LoginRpcs.toLayer({
 			const supabase = yield* SupabaseServerClient;
 			const { VercelUrl } = yield* ServerEnv;
 
-			yield* Effect.annotateCurrentSpan({ vercelUrl: Redacted.value(VercelUrl) });
+			const send = supabase.auth.signInWithOtp({
+				email: request.email,
+				options: {
+					shouldCreateUser: true,
+					emailRedirectTo: `${Redacted.value(VercelUrl)}/auth/confirm`,
+				},
+			});
 
-			yield* Effect.tryPromise(() =>
-				supabase.auth.signInWithOtp({
-					email: request.email,
-					options: {
-						shouldCreateUser: true,
-						emailRedirectTo: `${Redacted.value(VercelUrl)}/auth/confirm`,
-					},
-				}),
-			).pipe(Effect.flatMap(transformRawResultWithErrorDataToEffect));
-
-			return void 0;
+			return yield* pipe(
+				Effect.tryPromise(() => send),
+				Effect.filterOrFail(
+					(result) => result.error === null,
+					(result) => result.error,
+				),
+				Effect.andThen(void 0),
+			);
 		}).pipe(
 			Effect.withSpan("@honey-pot/src/rpc/procedures/login/LoginProcedures/SendMagicLink"),
 			Effect.tapErrorCause(Console.error),
@@ -37,20 +39,21 @@ export const LoginProcedures = LoginRpcs.toLayer({
 			const supabase = yield* SupabaseServerClient;
 			const { VercelUrl } = yield* ServerEnv;
 
-			const { data, error } = yield* Effect.tryPromise(() =>
-				supabase.auth.signInWithOAuth({
-					provider: "google",
-					options: {
-						redirectTo: `${Redacted.value(VercelUrl)}/auth/callback`,
-					},
-				}),
+			const send = supabase.auth.signInWithOAuth({
+				provider: "google",
+				options: {
+					redirectTo: `${Redacted.value(VercelUrl)}/auth/callback`,
+				},
+			});
+
+			return yield* pipe(
+				Effect.tryPromise(() => send),
+				Effect.filterOrFail(
+					(result) => result.error === null,
+					(result) => result.error,
+				),
+				Effect.andThen((result) => result.data.url),
 			);
-
-			if (error) {
-				return yield* Effect.fail(error);
-			}
-
-			return data.url;
 		}).pipe(
 			Effect.withSpan("@honey-pot/src/rpc/procedures/login/LoginProcedures/GoogleOAuthLogin"),
 			Effect.tapErrorCause(Console.error),

@@ -19,9 +19,9 @@ export const AuthenticatedUserMiddleware: Layer.Layer<AuthenticatedUserMiddlewar
 			});
 
 			const profile = yield* Effect.succeed(profileResponse).pipe(
-				Effect.andThen(({ data: user }) => user),
+				Effect.andThen((data) => data.data),
 				Effect.andThen(Effect.fromNullable),
-				Effect.andThen((user) => Schema.decodeUnknown(Profile.Profile)(user)),
+				Effect.andThen(Schema.decodeUnknown(Profile)),
 				Effect.orElseFail(() => Forbidden.make({ message: "Profile not found" })),
 			);
 

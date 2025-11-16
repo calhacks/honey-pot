@@ -1,4 +1,4 @@
-import { Effect, Schema as S } from "effect";
+import { Effect, Schema } from "effect";
 import { type NextRequest, NextResponse } from "next/server";
 import { ServerEnv } from "@/lib/env/server";
 import { SupabaseServerClient } from "@/lib/supabase/client/server";
@@ -7,9 +7,9 @@ import { NodeTracer } from "@/lib/tracing/spans";
 export const GET = async (request: NextRequest) => {
 	const redirectUrl = await Effect.gen(function* () {
 		const { searchParams, origin } = new URL(request.url);
-		const code = S.decodeUnknown(S.NonEmptyString)(searchParams.get("code"));
+		const code = Schema.decodeUnknown(Schema.NonEmptyString)(searchParams.get("code"));
 
-		const next = yield* S.decodeUnknown(S.NonEmptyString)(searchParams.get("next")).pipe(
+		const next = yield* Schema.decodeUnknown(Schema.NonEmptyString)(searchParams.get("next")).pipe(
 			Effect.orElseSucceed(() => "/"),
 			Effect.map((next) => (next.startsWith("/") ? next : "/")),
 		);

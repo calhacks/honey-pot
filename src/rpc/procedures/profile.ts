@@ -1,8 +1,9 @@
-import { Console, Effect, Schema as S } from "effect";
+// biome-ignore lint/suspicious/noShadowRestrictedNames: It's ok
+import { Array, Console, Effect, pipe, Schema } from "effect";
 import { ServerEnv } from "@/lib/env/server";
 import { SupabaseServerClient } from "@/lib/supabase/client/server";
 import { NodeTracer } from "@/lib/tracing/spans";
-import { SupabaseUser, transformRawResultToEffect } from "@/lib/utils/supabase";
+import { SupabaseUser } from "@/lib/utils/supabase";
 import { ProfileRpcs } from "@/rpc/rpc/profile";
 import { Profile } from "@/schema/supabase";
 
@@ -10,11 +11,14 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 	GetAllProfiles: () =>
 		Effect.gen(function* () {
 			const supabase = yield* SupabaseServerClient;
-			const query = supabase.from("profiles").select("*");
 
-			return yield* Effect.tryPromise(() => query).pipe(
-				Effect.flatMap(transformRawResultToEffect),
-				Effect.flatMap((result) => S.decodeUnknown(S.Array(Profile.Profile))(result)),
+			return yield* pipe(
+				Effect.tryPromise(() => supabase.from("profiles").select("*")),
+				Effect.filterOrFail(
+					(response) => response.error === null,
+					(response) => response.error,
+				),
+				Effect.andThen((response) => Schema.decodeUnknown(Schema.Array(Profile))(response.data)),
 			);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
@@ -28,11 +32,14 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 	GetProfileById: (request) =>
 		Effect.gen(function* () {
 			const supabase = yield* SupabaseServerClient;
-			const query = supabase.from("profiles").select("*").eq("id", request.id).single();
 
-			return yield* Effect.tryPromise(() => query).pipe(
-				Effect.flatMap(transformRawResultToEffect),
-				Effect.flatMap((result) => S.decodeUnknown(Profile.Profile)(result)),
+			return yield* pipe(
+				Effect.tryPromise(() => supabase.from("profiles").select("*").eq("id", request.id).single()),
+				Effect.filterOrFail(
+					(response) => response.error === null,
+					(response) => response.error,
+				),
+				Effect.andThen((response) => Schema.decodeUnknown(Profile)(response.data)),
 			);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
@@ -45,12 +52,15 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 	CreateProfile: (request) =>
 		Effect.gen(function* () {
 			const supabase = yield* SupabaseServerClient;
-			const serialized = S.decodeUnknown(Profile.Serialize)(request);
 
-			return yield* serialized.pipe(
-				Effect.flatMap((request) => Effect.tryPromise(() => supabase.from("profiles").insert(request))),
-				Effect.flatMap(transformRawResultToEffect),
-				Effect.flatMap((result) => S.decodeUnknown(Profile.Profile)(result)),
+			return yield* pipe(
+				Effect.tryPromise(() => supabase.from("profiles").insert(request).select()),
+				Effect.filterOrFail(
+					(response) => response.error === null,
+					(response) => response.error,
+				),
+				Effect.andThen((response) => Schema.decodeUnknown(Schema.NonEmptyArray(Profile))(response.data)),
+				Effect.map(Array.headNonEmpty),
 			);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
@@ -63,12 +73,15 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 	UpdateProfile: (request) =>
 		Effect.gen(function* () {
 			const supabase = yield* SupabaseServerClient;
-			const serialized = S.decodeUnknown(Profile.Serialize)(request);
 
-			return yield* serialized.pipe(
-				Effect.flatMap((request) => Effect.tryPromise(() => supabase.from("profiles").update(request))),
-				Effect.flatMap(transformRawResultToEffect),
-				Effect.flatMap((result) => S.decodeUnknown(Profile.Profile)(result)),
+			return yield* pipe(
+				Effect.tryPromise(() => supabase.from("profiles").update(request).select()),
+				Effect.filterOrFail(
+					(response) => response.error === null,
+					(response) => response.error,
+				),
+				Effect.andThen(Schema.decodeUnknown(Schema.NonEmptyArray(Profile))),
+				Effect.map(Array.headNonEmpty),
 			);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
@@ -81,15 +94,15 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 	DeleteProfile: (request) =>
 		Effect.gen(function* () {
 			const supabase = yield* SupabaseServerClient;
-			const serialized = S.decodeUnknown(Profile.Serialize)(request);
 
-			yield* serialized.pipe(
-				Effect.flatMap((request) =>
-					Effect.tryPromise(() => supabase.from("profiles").delete().eq("id", request.id)),
+			return yield* pipe(
+				Effect.tryPromise(() => supabase.from("profiles").delete().eq("id", request.id)),
+				Effect.filterOrFail(
+					(response) => response.error === null,
+					(response) => response.error,
 				),
+				Effect.andThen(void 0),
 			);
-
-			return yield* Effect.succeed(undefined);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
 			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/DeleteProfile"),
