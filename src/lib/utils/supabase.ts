@@ -1,5 +1,6 @@
 import { Data, Effect, pipe } from "effect";
 import { SupabaseServerClient } from "@/lib/supabase/client/server";
+import { BadGateway } from "@/schema/http";
 
 export class SupabaseUser extends Effect.Service<SupabaseUser>()("@honey-pot/src/lib/utils/supabase/SupabaseUser", {
 	dependencies: [SupabaseServerClient.Live],
@@ -8,7 +9,10 @@ export class SupabaseUser extends Effect.Service<SupabaseUser>()("@honey-pot/src
 		const supabase = yield* SupabaseServerClient;
 
 		return yield* pipe(
-			Effect.tryPromise(() => supabase.auth.getUser()),
+			Effect.tryPromise({
+				try: () => supabase.auth.getUser(),
+				catch: () => BadGateway.make({ message: "Failed to get user" }),
+			}),
 			Effect.filterOrFail(
 				(response) => response.error === null,
 				(response) => new UserNotFound({ message: response.error.message }),
