@@ -29,10 +29,11 @@ export const GET = async (request: NextRequest) => {
 			onFailure: () => Effect.succeed(`${origin}/login"`),
 		});
 	}).pipe(
+		Effect.withSpan("@honey-pot/src/app/auth/callback/route/GET"),
+
 		Effect.flatten,
 		Effect.catchAll(() => Effect.succeed(`${origin}/login"`)),
 
-		Effect.withSpan("@honey-pot/src/app/auth/callback/route/GET"),
 		Effect.provide(SupabaseServerClient.Live),
 		Effect.provide(ServerEnv.Live),
 		Effect.provide(NodeTracer),

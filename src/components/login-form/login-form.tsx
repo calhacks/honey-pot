@@ -1,7 +1,7 @@
 "use client";
 
 import { effectTsResolver } from "@hookform/resolvers/effect-ts";
-import { Schema as S } from "effect";
+import { Schema } from "effect";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -86,10 +86,10 @@ export default function LoginForm() {
 	);
 }
 
-const EmailFormSchema = S.Struct({
-	email: S.String.pipe(
-		S.nonEmptyString({ message: () => "Email is required" }),
-		S.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, { message: () => "Invalid email address" }),
+const EmailFormSchema = Schema.Struct({
+	email: Schema.String.pipe(
+		Schema.nonEmptyString({ message: () => "Email is required" }),
+		Schema.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, { message: () => "Invalid email address" }),
 	),
 });
-type EmailForm = S.Schema.Type<typeof EmailFormSchema>;
+type EmailForm = typeof EmailFormSchema.Type;
