@@ -2,8 +2,8 @@
 import { Array, Console, Effect, pipe, Schema } from "effect";
 import { ServerEnv } from "@/lib/env/server";
 import { SupabaseServerClient } from "@/lib/supabase/client/server";
+import { SupabaseUser } from "@/lib/supabase/user";
 import { NodeTracer } from "@/lib/tracing/spans";
-import { SupabaseUser } from "@/lib/utils/supabase";
 import { ProfileRpcs } from "@/rpc/rpc/profile";
 import { Profile } from "@/schema/supabase";
 
