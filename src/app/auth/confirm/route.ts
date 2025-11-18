@@ -2,7 +2,7 @@ import { Effect, Schema } from "effect";
 import { redirect } from "next/navigation";
 import type { NextRequest } from "next/server";
 import { ServerEnv } from "@/lib/env/server";
-import { SupabaseServerClient } from "@/lib/supabase/client/server";
+import { SupabaseServerClient } from "@/lib/supabase/client";
 import { NodeTracer } from "@/lib/tracing/spans";
 
 const SupabaseEmailOtpType = Schema.Literal("signup", "invite", "magiclink", "recovery", "email_change", "email");

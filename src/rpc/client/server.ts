@@ -1,7 +1,7 @@
 import { FetchHttpClient } from "@effect/platform";
 import { RpcClient, RpcSerialization } from "@effect/rpc";
 import { Console, Context, Effect, Layer } from "effect";
-import { Rpcs } from "@/rpc/rpc";
+import { Rpcs } from "@/rpc/procedures/definitions";
 
 export class Protocol extends Context.Tag("@honey-pot/src/rpc/client/server/Protocol")<Protocol, RpcClient.Protocol>() {
 	static Live = RpcClient.layerProtocolHttp({

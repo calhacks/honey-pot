@@ -1,8 +1,8 @@
 import { Console, Effect, pipe, Redacted } from "effect";
 import { ServerEnv } from "@/lib/env/server";
-import { SupabaseServerClient } from "@/lib/supabase/client/server";
+import { SupabaseServerClient } from "@/lib/supabase/client";
 import { NodeTracer } from "@/lib/tracing/spans";
-import { LoginRpcs } from "@/rpc/rpc/login";
+import { LoginRpcs } from "@/rpc/procedures/login/schema";
 
 export const LoginProcedures = LoginRpcs.toLayer({
 	SendMagicLink: (request) =>
@@ -27,7 +27,7 @@ export const LoginProcedures = LoginRpcs.toLayer({
 				Effect.andThen(void 0),
 			);
 		}).pipe(
-			Effect.withSpan("@honey-pot/src/rpc/procedures/login/LoginProcedures/SendMagicLink"),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/login/layer/LoginProcedures/SendMagicLink"),
 			Effect.tapErrorCause(Console.error),
 			Effect.provide(SupabaseServerClient.Live),
 			Effect.provide(ServerEnv.Live),
@@ -55,7 +55,7 @@ export const LoginProcedures = LoginRpcs.toLayer({
 				Effect.andThen((result) => result.data.url),
 			);
 		}).pipe(
-			Effect.withSpan("@honey-pot/src/rpc/procedures/login/LoginProcedures/GoogleOAuthLogin"),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/login/layer/LoginProcedures/GoogleOAuthLogin"),
 			Effect.tapErrorCause(Console.error),
 			Effect.provide(SupabaseServerClient.Live),
 			Effect.provide(ServerEnv.Live),

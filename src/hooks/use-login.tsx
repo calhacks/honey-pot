@@ -2,19 +2,17 @@
 
 import { useEffectMutationSWR } from "@/hooks/use-effect-swr";
 import { Rpc, rpc } from "@/rpc/client/browser";
-import type { GoogleOAuthLoginPayload, SendMagicLinkPayload } from "@/rpc/rpc/login";
+import type { GoogleOAuthLoginPayload, SendMagicLinkPayload } from "@/rpc/procedures/login/schema";
 
-const UseSendMagicLinkKey = "use-send-magic-link";
-const UseGoogleOAuthKey = "use-google-oauth";
+const SendMagicLinkKey = "send-magic-link";
+const GoogleOAuthKey = "google-oauth";
 
 export function useSendMagicLink() {
-	return useEffectMutationSWR(UseSendMagicLinkKey, (payload: SendMagicLinkPayload) =>
-		rpc(Rpc.SendMagicLink(payload)),
-	);
+	return useEffectMutationSWR(SendMagicLinkKey, (payload: SendMagicLinkPayload) => rpc(Rpc.SendMagicLink(payload)));
 }
 
 export function useGoogleOAuth() {
-	return useEffectMutationSWR(UseGoogleOAuthKey, (payload: GoogleOAuthLoginPayload) =>
+	return useEffectMutationSWR(GoogleOAuthKey, (payload: GoogleOAuthLoginPayload) =>
 		rpc(Rpc.GoogleOAuthLogin(payload)),
 	);
 }

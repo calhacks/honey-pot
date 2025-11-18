@@ -5,9 +5,6 @@ export class ClientEnv extends Effect.Service<ClientEnv>()("@honey-pot/src/lib/e
 		const NextPublicHost = Config.nonEmptyString("NEXT_PUBLIC_VERCEL_URL").pipe(
 			Config.withDefault("http://localhost:3000"),
 		);
-		const NextPublicSupabasePublishableKey = Config.nonEmptyString("SUPABASE_PUBLISHABLE_DEFAULT_KEY").pipe(
-			Config.orElse(() => Config.nonEmptyString(process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY)),
-		);
 		const NextPublicSupabaseUrl = Config.nonEmptyString("NEXT_PUBLIC_SUPABASE_URL").pipe(
 			Config.orElse(() => Config.nonEmptyString(process.env.NEXT_PUBLIC_SUPABASE_URL)),
 		);
@@ -19,7 +16,6 @@ export class ClientEnv extends Effect.Service<ClientEnv>()("@honey-pot/src/lib/e
 
 		const config = yield* Config.all({
 			NextPublicHost: Config.redacted(NextPublicHost),
-			NextPublicSupabasePublishableKey: Config.redacted(NextPublicSupabasePublishableKey),
 			NextPublicSupabaseUrl: Config.redacted(NextPublicSupabaseUrl),
 			NextPublicVercelUrl: Config.redacted(NextPublicVercelUrl),
 		});

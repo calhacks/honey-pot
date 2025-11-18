@@ -7,7 +7,7 @@ import type { Database } from "@/lib/supabase/database.types";
 
 export type SupabaseServerClientType = SupabaseClient<Database>;
 
-export class SupabaseServerClient extends Context.Tag("@honey-pot/src/lib/supabase/client/server/SupabaseServerClient")<
+export class SupabaseServerClient extends Context.Tag("@honey-pot/src/lib/supabase/client/SupabaseServerClient")<
 	SupabaseServerClient,
 	SupabaseServerClientType
 >() {

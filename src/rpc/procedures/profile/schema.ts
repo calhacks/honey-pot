@@ -1,6 +1,6 @@
 import { Rpc, RpcGroup } from "@effect/rpc";
 import { Schema } from "effect";
-import { AuthenticatedUserMiddlewareContext } from "@/rpc/middleware/context";
+import { AdminUser, AuthenticatedUser } from "@/rpc/middleware/context";
 import { Profile } from "@/schema/supabase";
 
 export const GetAllProfiles = Rpc.make("GetAllProfiles", {
@@ -21,7 +21,7 @@ export const GetProfileById = Rpc.make("GetProfileById", {
 	payload: Schema.Struct({
 		id: Profile.fields.id,
 	}),
-}).middleware(AuthenticatedUserMiddlewareContext);
+}).middleware(AuthenticatedUser);
 
 export type GetProfileByIdSuccess = Rpc.Success<typeof GetProfileById>;
 export type GetProfileByIdError = Rpc.Error<typeof GetProfileById>;
@@ -36,7 +36,7 @@ export const CreateProfile = Rpc.make("CreateProfile", {
 		role: Profile.fields.role,
 		avatar_url: Profile.fields.avatar_url,
 	}),
-});
+}).middleware(AdminUser);
 
 export const UpdateProfile = Rpc.make("UpdateProfile", {
 	success: Profile,
@@ -59,7 +59,7 @@ export const DeleteProfile = Rpc.make("DeleteProfile", {
 	payload: Schema.Struct({
 		id: Profile.fields.id,
 	}),
-});
+}).middleware(AdminUser);
 
 export type DeleteProfileSuccess = Rpc.Success<typeof DeleteProfile>;
 export type DeleteProfileError = Rpc.Error<typeof DeleteProfile>;

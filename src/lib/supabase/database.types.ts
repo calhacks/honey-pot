@@ -11,15 +11,42 @@ export type Database = {
 			events: {
 				Row: {
 					created_at: string;
+					created_by: string | null;
+					description: string | null;
+					ends_at: string | null;
 					id: string;
+					landing_page_absolute_url: string | null;
+					live_site_absolute_url: string | null;
+					slug: string;
+					starts_at: string | null;
+					title: string;
+					updated_at: string;
 				};
 				Insert: {
 					created_at?: string;
+					created_by?: string | null;
+					description?: string | null;
+					ends_at?: string | null;
 					id?: string;
+					landing_page_absolute_url?: string | null;
+					live_site_absolute_url?: string | null;
+					slug: string;
+					starts_at?: string | null;
+					title: string;
+					updated_at?: string;
 				};
 				Update: {
 					created_at?: string;
+					created_by?: string | null;
+					description?: string | null;
+					ends_at?: string | null;
 					id?: string;
+					landing_page_absolute_url?: string | null;
+					live_site_absolute_url?: string | null;
+					slug?: string;
+					starts_at?: string | null;
+					title?: string;
+					updated_at?: string;
 				};
 				Relationships: [];
 			};

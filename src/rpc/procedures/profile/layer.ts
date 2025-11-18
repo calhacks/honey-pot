@@ -1,10 +1,10 @@
 // biome-ignore lint/suspicious/noShadowRestrictedNames: It's ok
 import { Array, Console, Effect, pipe, Schema } from "effect";
 import { ServerEnv } from "@/lib/env/server";
-import { SupabaseServerClient } from "@/lib/supabase/client/server";
+import { SupabaseServerClient } from "@/lib/supabase/client";
 import { SupabaseUser } from "@/lib/supabase/user";
 import { NodeTracer } from "@/lib/tracing/spans";
-import { ProfileRpcs } from "@/rpc/rpc/profile";
+import { ProfileRpcs } from "@/rpc/procedures/profile/schema";
 import { Profile } from "@/schema/supabase";
 
 export const ProfileProcedures = ProfileRpcs.toLayer({
@@ -22,7 +22,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 			);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
-			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/GetAllProfiles"),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/layer/ProfileProcedures/GetAllProfiles"),
 			Effect.provide(SupabaseServerClient.Live),
 			Effect.provide(SupabaseUser.Default),
 			Effect.provide(ServerEnv.Live),
@@ -43,7 +43,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 			);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
-			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/GetProfileById"),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/layer/ProfileProcedures/GetProfileById"),
 			Effect.provide(SupabaseServerClient.Live),
 			Effect.provide(ServerEnv.Live),
 			Effect.provide(NodeTracer),
@@ -64,7 +64,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 			);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
-			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/CreateProfile"),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/layer/ProfileProcedures/CreateProfile"),
 			Effect.provide(SupabaseServerClient.Live),
 			Effect.provide(ServerEnv.Live),
 			Effect.provide(NodeTracer),
@@ -85,7 +85,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 			);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
-			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/UpdateProfile"),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/layer/ProfileProcedures/UpdateProfile"),
 			Effect.provide(SupabaseServerClient.Live),
 			Effect.provide(ServerEnv.Live),
 			Effect.provide(NodeTracer),
@@ -105,7 +105,7 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 			);
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
-			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/ProfileProcedures/DeleteProfile"),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/layer/ProfileProcedures/DeleteProfile"),
 			Effect.provide(SupabaseServerClient.Live),
 			Effect.provide(ServerEnv.Live),
 			Effect.provide(NodeTracer),

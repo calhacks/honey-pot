@@ -2,7 +2,7 @@ import { afterAll, beforeAll, describe, it } from "@effect/vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { Effect, Logger, pipe } from "effect";
 import { ServerEnv } from "@/lib/env/server";
-import { SupabaseServerClient } from "@/lib/supabase/client/server";
+import { SupabaseServerClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/database.types";
 import { Rpc, RpcProvider } from "@/rpc/client/server";
 
