@@ -1,29 +1,28 @@
 "use client";
 
+import { useAtomSet } from "@effect-atom/atom-react";
+import { Exit } from "effect";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { useGoogleOAuth } from "@/hooks/use-login";
 import { cn } from "@/lib/tailwind/utils";
+import { Client } from "@/rpc/client/browser";
 
 interface LoginButtonProps {
 	className?: string;
 }
 
 export function LoginGoogleButton(props: LoginButtonProps) {
-	const { trigger: initiateGoogleOAuthLogin } = useGoogleOAuth();
+	const googleLogin = useAtomSet(Client.mutation("GoogleOAuthLogin"), { mode: "promiseExit" });
 
 	return (
 		<Button
-			onClick={() =>
-				initiateGoogleOAuthLogin({
-					onSuccess: (redirectUrl) => {
-						window.location.assign(redirectUrl);
-					},
-					onError: (_error) => {
-						toast.error("Error");
-					},
-				})
-			}
+			onClick={async () => {
+				const loginResult = await googleLogin({ payload: {}, reactivityKeys: ["google-oauth-login"] });
+				Exit.match(loginResult, {
+					onFailure: () => toast.error("Could not reach Google"),
+					onSuccess: (url) => window.location.assign(url),
+				});
+			}}
 			variant="outline"
 			className={cn(props.className)}
 		>

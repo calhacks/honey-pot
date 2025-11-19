@@ -1,4 +1,4 @@
-import EventDropdown from "@/components/event-dropdown/dropdown";
+import EventDropdown from "@/components/dashboard-sidebar/event-dropdown";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
 
 export interface DashboardSidebarProps {

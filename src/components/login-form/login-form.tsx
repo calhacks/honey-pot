@@ -1,7 +1,8 @@
 "use client";
 
+import { useAtomSet } from "@effect-atom/atom-react";
 import { effectTsResolver } from "@hookform/resolvers/effect-ts";
-import { Schema } from "effect";
+import { Exit, Schema } from "effect";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -13,10 +14,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
-import { useSendMagicLink } from "@/hooks/use-login";
+import { Client } from "@/rpc/client/browser";
 
 export default function LoginForm() {
-	const { trigger: sendMagicLink } = useSendMagicLink();
+	const sendMagicLink = useAtomSet(Client.mutation("SendMagicLink"), { mode: "promiseExit" });
 
 	const form = useForm<EmailForm>({
 		resolver: effectTsResolver(EmailFormSchema),
@@ -26,16 +27,17 @@ export default function LoginForm() {
 	});
 
 	async function onSubmit(emailForm: EmailForm) {
-		await sendMagicLink({
-			email: emailForm.email,
-			onSuccess: () => {
-				toast.success("Sent");
-			},
-			onError: (_error) => {
+		const magicLinkResult = await sendMagicLink({
+			payload: { email: emailForm.email },
+			reactivityKeys: ["send-magic-link"],
+		});
+
+		Exit.match(magicLinkResult, {
+			onFailure: () =>
 				form.setError("email", {
 					message: "Error sending OTP. Please try again.",
-				});
-			},
+				}),
+			onSuccess: () => toast.success("Sent"),
 		});
 	}
 
