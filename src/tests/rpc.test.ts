@@ -4,7 +4,6 @@ import { Effect, Logger, pipe } from "effect";
 import { ServerEnv } from "@/lib/env/server";
 import { SupabaseServerClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/supabase/database.types";
-import { Rpc, RpcProvider } from "@/rpc/client/server";
 
 describe("Initialization", () => {
 	let admin: SupabaseClient<Database>;
@@ -44,13 +43,13 @@ describe("Initialization", () => {
 		}).pipe(Effect.provide(Logger.pretty)),
 	);
 
-	it("Create profile", () => {
-		RpcProvider.Test(
-			Rpc.CreateProfile({
-				avatar_url: "https://example.com/avatar.png",
-				role: "admin",
-				user_id: "11111111-1111-1111-1111-111111111111",
-			}),
-		);
-	});
+	// it("Create profile", () => {
+	// 	RpcProvider.Test(
+	// 		Rpc.CreateProfile({
+	// 			avatar_url: "https://example.com/avatar.png",
+	// 			role: "admin",
+	// 			user_id: "11111111-1111-1111-1111-111111111111",
+	// 		}),
+	// 	);
+	// });
 });

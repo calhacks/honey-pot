@@ -5,14 +5,14 @@ import { Exit } from "effect";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/tailwind/utils";
-import { Client } from "@/rpc/client/browser";
+import { BrowserRpcClient } from "@/rpc/client/browser";
 
 interface LoginButtonProps {
 	className?: string;
 }
 
 export function LoginGoogleButton(props: LoginButtonProps) {
-	const googleLogin = useAtomSet(Client.mutation("GoogleOAuthLogin"), { mode: "promiseExit" });
+	const googleLogin = useAtomSet(BrowserRpcClient.mutation("GoogleOAuthLogin"), { mode: "promiseExit" });
 
 	return (
 		<Button

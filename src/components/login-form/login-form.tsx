@@ -14,10 +14,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
-import { Client } from "@/rpc/client/browser";
+import { BrowserRpcClient } from "@/rpc/client/browser";
 
 export default function LoginForm() {
-	const sendMagicLink = useAtomSet(Client.mutation("SendMagicLink"), { mode: "promiseExit" });
+	const sendMagicLink = useAtomSet(BrowserRpcClient.mutation("SendMagicLink"), { mode: "promiseExit" });
 
 	const form = useForm<EmailForm>({
 		resolver: effectTsResolver(EmailFormSchema),
