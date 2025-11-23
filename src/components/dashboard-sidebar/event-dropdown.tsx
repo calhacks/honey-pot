@@ -13,15 +13,14 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useIsMobile } from "@/hooks/use-mobile";
-import type { Event } from "@/schema/supabase";
 
 export default function EventDropdown() {
 	const eventsResult = useAtomValue(
 		GetAllEventsAtom,
 		Result.map((events) => Object.fromEntries(events.map((event) => [event.id, event]))),
 	);
-	const events = Result.getOrElse(eventsResult, () => ({}) as Record<string, Event>);
 
 	const activeEventId = useAtomValue(activeEventAtom);
 	const setActiveEventId = useAtomSet(activeEventAtom, { mode: "value" });
@@ -32,7 +31,7 @@ export default function EventDropdown() {
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<SidebarMenuButton size="lg">
-					<Avatar className="size-7 rounded-sm">
+					<Avatar className="size-8 rounded-sm">
 						<AvatarImage src="" />
 						<AvatarFallback>
 							<CircleQuestionMarkIcon className="size-5" />
@@ -41,7 +40,13 @@ export default function EventDropdown() {
 
 					<div className="flex flex-1 flex-col text-left text-sm leading-tight">
 						<span className="max-w-40 truncate font-medium">
-							{activeEventId ? (events[activeEventId]?.title ?? "No Event") : "No Event"}
+							{Result.matchWithWaiting(eventsResult, {
+								onDefect: () => "",
+								onError: () => "",
+								onSuccess: (events) =>
+									activeEventId ? (events.value[activeEventId]?.title ?? "") : "",
+								onWaiting: () => <Skeleton className="h-5 w-20" />,
+							})}
 						</span>
 					</div>
 
@@ -56,18 +61,33 @@ export default function EventDropdown() {
 				sideOffset={4}
 			>
 				<DropdownMenuLabel className="text-muted-foreground text-xs">Events</DropdownMenuLabel>
-				{Object.values(events).map((event) => (
-					<DropdownMenuItem key={event.id} onClick={() => setActiveEventId(event.id)} className="gap-2 p-2">
-						<Avatar className="size-6 rounded-sm shrink-0">
-							<AvatarImage src={event.avatar_url ?? ""} />
-							<AvatarFallback>
-								<CircleQuestionMarkIcon className="size-4" />
-							</AvatarFallback>
-						</Avatar>
+				{Result.matchWithWaiting(eventsResult, {
+					onDefect: () => "",
+					onError: () => "",
+					onSuccess: (events) =>
+						Object.values(events.value).map((event) => (
+							<DropdownMenuItem
+								key={event.id}
+								onClick={() => setActiveEventId(event.id)}
+								className="gap-2 p-2"
+							>
+								<Avatar className="size-6 rounded-sm shrink-0">
+									<AvatarImage src={event.avatar_url ?? ""} />
+									<AvatarFallback>
+										<CircleQuestionMarkIcon className="size-4" />
+									</AvatarFallback>
+								</Avatar>
 
-						<span className="truncate">{event.title}</span>
-					</DropdownMenuItem>
-				))}
+								<span className="truncate">{event.title}</span>
+							</DropdownMenuItem>
+						)),
+					onWaiting: () => (
+						<DropdownMenuItem className="gap-2 p-2">
+							<Skeleton className="size-6" />
+							<Skeleton className="h-5 w-20" />
+						</DropdownMenuItem>
+					),
+				})}
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);
