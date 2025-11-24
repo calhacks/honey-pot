@@ -1,5 +1,6 @@
 import EventDropdown from "@/components/dashboard-sidebar/event-dropdown";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar";
+import SidebarNav from "@/components/dashboard-sidebar/nav";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
 
 export interface DashboardSidebarProps {
 	sidebar?: React.ComponentProps<typeof Sidebar>;
@@ -11,9 +12,10 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
 			<SidebarHeader>
 				<EventDropdown />
 			</SidebarHeader>
-			<SidebarContent></SidebarContent>
+			<SidebarContent>
+				<SidebarNav />
+			</SidebarContent>
 			<SidebarFooter></SidebarFooter>
-			<SidebarRail></SidebarRail>
 		</Sidebar>
 	);
 }

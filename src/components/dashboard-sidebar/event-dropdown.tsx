@@ -1,7 +1,8 @@
 "use client";
 
 import { Result, useAtomSet, useAtomValue } from "@effect-atom/atom-react";
-import { ChevronsUpDown, CircleQuestionMarkIcon } from "lucide-react";
+import { IconQuestionMark } from "@tabler/icons-react";
+import { ChevronsUpDown } from "lucide-react";
 import { GetAllEventsAtom } from "@/atoms/events";
 import { activeEventAtom } from "@/atoms/local-storage";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -34,7 +35,7 @@ export default function EventDropdown() {
 					<Avatar className="size-8 rounded-sm">
 						<AvatarImage src="" />
 						<AvatarFallback>
-							<CircleQuestionMarkIcon className="size-5" />
+							<IconQuestionMark className="size-5" />
 						</AvatarFallback>
 					</Avatar>
 
@@ -74,7 +75,7 @@ export default function EventDropdown() {
 								<Avatar className="size-6 rounded-sm shrink-0">
 									<AvatarImage src={event.avatar_url ?? ""} />
 									<AvatarFallback>
-										<CircleQuestionMarkIcon className="size-4" />
+										<IconQuestionMark className="size-4" />
 									</AvatarFallback>
 								</Avatar>
 
