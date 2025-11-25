@@ -1,5 +1,6 @@
 import EventDropdown from "@/components/dashboard-sidebar/event-dropdown";
 import SidebarNav from "@/components/dashboard-sidebar/nav";
+import SidebarProfile from "@/components/dashboard-sidebar/profile";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader } from "@/components/ui/sidebar";
 
 export interface DashboardSidebarProps {
@@ -15,7 +16,9 @@ export default function DashboardSidebar(props: DashboardSidebarProps) {
 			<SidebarContent>
 				<SidebarNav />
 			</SidebarContent>
-			<SidebarFooter></SidebarFooter>
+			<SidebarFooter>
+				<SidebarProfile />
+			</SidebarFooter>
 		</Sidebar>
 	);
 }

@@ -10,10 +10,6 @@ export const GetAllProfiles = Rpc.make("GetAllProfiles", {
 	payload: Schema.Struct({}),
 });
 
-export type GetAllProfilesSuccess = Rpc.Success<typeof GetAllProfiles>;
-export type GetAllProfilesError = Rpc.Error<typeof GetAllProfiles>;
-export type GetAllProfilesPayload = Rpc.Payload<typeof GetAllProfiles>;
-
 export const GetProfileById = Rpc.make("GetProfileById", {
 	success: Profile,
 	// TODO: proper failure types
@@ -23,9 +19,12 @@ export const GetProfileById = Rpc.make("GetProfileById", {
 	}),
 }).middleware(AuthenticatedUser);
 
-export type GetProfileByIdSuccess = Rpc.Success<typeof GetProfileById>;
-export type GetProfileByIdError = Rpc.Error<typeof GetProfileById>;
-export type GetProfileByIdPayload = Rpc.Payload<typeof GetProfileById>;
+export const GetCurrentProfile = Rpc.make("GetCurrentProfile", {
+	success: Profile,
+	// TODO: proper failure types
+	error: Schema.Unknown,
+	payload: Schema.Struct({}),
+}).middleware(AuthenticatedUser);
 
 export const CreateProfile = Rpc.make("CreateProfile", {
 	success: Profile,
@@ -46,11 +45,7 @@ export const UpdateProfile = Rpc.make("UpdateProfile", {
 		role: Schema.optionalWith(Profile.fields.role, { exact: true }),
 		avatar_url: Schema.optionalWith(Profile.fields.avatar_url, { exact: true }),
 	}),
-});
-
-export type UpdateProfileSuccess = Rpc.Success<typeof UpdateProfile>;
-export type UpdateProfileError = Rpc.Error<typeof UpdateProfile>;
-export type UpdateProfilePayload = Rpc.Payload<typeof UpdateProfile>;
+}).middleware(AuthenticatedUser);
 
 export const DeleteProfile = Rpc.make("DeleteProfile", {
 	success: Schema.Undefined,
@@ -61,13 +56,10 @@ export const DeleteProfile = Rpc.make("DeleteProfile", {
 	}),
 }).middleware(AdminUser);
 
-export type DeleteProfileSuccess = Rpc.Success<typeof DeleteProfile>;
-export type DeleteProfileError = Rpc.Error<typeof DeleteProfile>;
-export type DeleteProfilePayload = Rpc.Payload<typeof DeleteProfile>;
-
 export class ProfileRpcs extends RpcGroup.make(
 	GetAllProfiles,
 	GetProfileById,
+	GetCurrentProfile,
 	CreateProfile,
 	UpdateProfile,
 	DeleteProfile,

@@ -2,9 +2,10 @@
 
 import { Result, useAtomSet, useAtomValue } from "@effect-atom/atom-react";
 import { IconQuestionMark } from "@tabler/icons-react";
+import { Array, Option } from "effect";
 import { ChevronsUpDown } from "lucide-react";
-import { GetAllEventsAtom } from "@/atoms/events";
-import { activeEventAtom } from "@/atoms/local-storage";
+import { ActiveEventAtom, GetAllEventsAtom } from "@/atoms/events";
+import { LocalStorageActiveEventIdAtom } from "@/atoms/local-storage";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
 	DropdownMenu,
@@ -18,13 +19,9 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function EventDropdown() {
-	const eventsResult = useAtomValue(
-		GetAllEventsAtom,
-		Result.map((events) => Object.fromEntries(events.map((event) => [event.id, event]))),
-	);
-
-	const activeEventId = useAtomValue(activeEventAtom);
-	const setActiveEventId = useAtomSet(activeEventAtom, { mode: "value" });
+	const eventsResult = useAtomValue(GetAllEventsAtom);
+	const activeEventResult = useAtomValue(ActiveEventAtom);
+	const setActiveEventId = useAtomSet(LocalStorageActiveEventIdAtom);
 
 	const isMobile = useIsMobile();
 
@@ -32,7 +29,7 @@ export default function EventDropdown() {
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
 				<SidebarMenuButton size="lg">
-					<Avatar className="size-8 rounded-sm">
+					<Avatar className="h-8 w-8 rounded-sm">
 						<AvatarImage src="" />
 						<AvatarFallback>
 							<IconQuestionMark className="size-5" />
@@ -41,11 +38,11 @@ export default function EventDropdown() {
 
 					<div className="flex flex-1 flex-col text-left text-sm leading-tight">
 						<span className="max-w-40 truncate font-medium">
-							{Result.matchWithWaiting(eventsResult, {
+							{Result.matchWithWaiting(activeEventResult, {
 								onDefect: () => "",
 								onError: () => "",
-								onSuccess: (events) =>
-									activeEventId ? (events.value[activeEventId]?.title ?? "") : "",
+								onSuccess: (event) =>
+									Option.match(event.value, { onNone: () => "", onSome: (event) => event.title }),
 								onWaiting: () => <Skeleton className="h-5 w-20" />,
 							})}
 						</span>
@@ -66,14 +63,14 @@ export default function EventDropdown() {
 					onDefect: () => "",
 					onError: () => "",
 					onSuccess: (events) =>
-						Object.values(events.value).map((event) => (
+						events.value.map((event) => (
 							<DropdownMenuItem
 								key={event.id}
 								onClick={() => setActiveEventId(event.id)}
 								className="gap-2 p-2"
 							>
-								<Avatar className="size-6 rounded-sm shrink-0">
-									<AvatarImage src={event.avatar_url ?? ""} />
+								<Avatar className="h-6 w-6 rounded-sm shrink-0">
+									<AvatarImage src={event.avatar_url ?? undefined} className="size-5" />
 									<AvatarFallback>
 										<IconQuestionMark className="size-4" />
 									</AvatarFallback>

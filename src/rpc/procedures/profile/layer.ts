@@ -49,6 +49,28 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 			Effect.provide(NodeTracer),
 		),
 
+	GetCurrentProfile: () =>
+		Effect.gen(function* () {
+			const supabase = yield* SupabaseServerClient;
+			const { id } = yield* SupabaseUser;
+
+			return yield* pipe(
+				Effect.tryPromise(() => supabase.from("profiles").select("*").eq("user_id", id).single()),
+				Effect.filterOrFail(
+					(response) => response.error === null,
+					(response) => response.error,
+				),
+				Effect.andThen((response) => Schema.decodeUnknown(Profile)(response.data)),
+			);
+		}).pipe(
+			Effect.tapErrorCause(Console.error),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/layer/ProfileProcedures/GetCurrentProfile"),
+			Effect.provide(SupabaseServerClient.Live),
+			Effect.provide(SupabaseUser.Default),
+			Effect.provide(ServerEnv.Live),
+			Effect.provide(NodeTracer),
+		),
+
 	CreateProfile: (request) =>
 		Effect.gen(function* () {
 			const supabase = yield* SupabaseServerClient;

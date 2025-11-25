@@ -10,7 +10,7 @@ export const EventProcedures = EventRpcs.toLayer({
 			const supabase = yield* SupabaseServerClient;
 
 			return yield* pipe(
-				Effect.tryPromise(() => supabase.from("events").select("*")),
+				Effect.tryPromise(() => supabase.from("events").select("*").order("title", { ascending: true })),
 				Effect.filterOrFail(
 					(response) => response.error === null,
 					(response) => response.error,
