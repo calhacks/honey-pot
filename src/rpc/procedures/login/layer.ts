@@ -61,4 +61,24 @@ export const LoginProcedures = LoginRpcs.toLayer({
 			Effect.provide(ServerEnv.Live),
 			Effect.provide(NodeTracer),
 		),
+
+	SignOut: () =>
+		Effect.gen(function* () {
+			const supabase = yield* SupabaseServerClient;
+
+			return yield* pipe(
+				Effect.tryPromise(() => supabase.auth.signOut()),
+				Effect.filterOrFail(
+					(result) => result.error === null,
+					(result) => result.error,
+				),
+				Effect.andThen(void 0),
+			);
+		}).pipe(
+			Effect.withSpan("@honey-pot/src/rpc/procedures/login/layer/LoginProcedures/SignOut"),
+			Effect.tapErrorCause(Console.error),
+			Effect.provide(SupabaseServerClient.Live),
+			Effect.provide(ServerEnv.Live),
+			Effect.provide(NodeTracer),
+		),
 });

@@ -29,7 +29,6 @@ export default function LoginForm() {
 	async function onSubmit(emailForm: EmailForm) {
 		const magicLinkResult = await sendMagicLink({
 			payload: { email: emailForm.email },
-			reactivityKeys: ["send-magic-link"],
 		});
 
 		Exit.match(magicLinkResult, {

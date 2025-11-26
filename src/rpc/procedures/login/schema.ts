@@ -9,18 +9,16 @@ export const SendMagicLink = Rpc.make("SendMagicLink", {
 	}),
 });
 
-export type SendMagicLinkSuccess = Rpc.Success<typeof SendMagicLink>;
-export type SendMagicLinkError = Rpc.Error<typeof SendMagicLink>;
-export type SendMagicLinkPayload = Rpc.Payload<typeof SendMagicLink>;
-
 export const GoogleOAuthLogin = Rpc.make("GoogleOAuthLogin", {
 	success: Schema.String,
 	error: Schema.Unknown,
 	payload: Schema.Struct({}),
 });
 
-export type GoogleOAuthLoginSuccess = Rpc.Success<typeof GoogleOAuthLogin>;
-export type GoogleOAuthLoginError = Rpc.Error<typeof GoogleOAuthLogin>;
-export type GoogleOAuthLoginPayload = Rpc.Payload<typeof GoogleOAuthLogin>;
+export const SignOut = Rpc.make("SignOut", {
+	success: Schema.Undefined,
+	error: Schema.Unknown,
+	payload: Schema.Struct({}),
+});
 
-export class LoginRpcs extends RpcGroup.make(SendMagicLink, GoogleOAuthLogin) {}
+export class LoginRpcs extends RpcGroup.make(SendMagicLink, GoogleOAuthLogin, SignOut) {}

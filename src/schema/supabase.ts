@@ -9,6 +9,9 @@ export const Profile = Schema.Struct({
 	updated_at: Schema.DateTimeUtc,
 	role: ProfileRole,
 	avatar_url: Schema.NullOr(Schema.String),
+	first_name: Schema.NullOr(Schema.String),
+	last_name: Schema.NullOr(Schema.String),
+	email: Schema.NullOr(Schema.String),
 });
 export type Profile = typeof Profile.Type;
 

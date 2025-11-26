@@ -17,7 +17,7 @@ export function LoginGoogleButton(props: LoginButtonProps) {
 	return (
 		<Button
 			onClick={async () => {
-				const loginResult = await googleLogin({ payload: {}, reactivityKeys: ["google-oauth-login"] });
+				const loginResult = await googleLogin({ payload: {} });
 				Exit.match(loginResult, {
 					onFailure: () => toast.error("Could not reach Google"),
 					onSuccess: (url) => window.location.assign(url),
