@@ -2,7 +2,8 @@ import { Config, Effect } from "effect";
 
 export class ClientEnv extends Effect.Service<ClientEnv>()("@honey-pot/src/lib/env/client/ClientEnv", {
 	effect: Effect.gen(function* () {
-		const NextPublicVercelUrl = Config.nonEmptyString("VERCEL_URL").pipe(
+		const NextPublicVercelUrl = Config.nonEmptyString("NEXT_PUBLIC_VERCEL_URL").pipe(
+			Config.orElse(() => Config.nonEmptyString(process.env.NEXT_PUBLIC_VERCEL_URL)),
 			Config.withDefault("http://localhost:3000"),
 			Config.map((url) => (url.startsWith("http") ? url : `https://${url}`)),
 		);
