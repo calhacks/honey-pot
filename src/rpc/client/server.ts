@@ -2,17 +2,17 @@ import { FetchHttpClient } from "@effect/platform";
 import { RpcClient, RpcSerialization } from "@effect/rpc";
 import { AtomRpc } from "@effect-atom/atom-react";
 import { Context, Effect, Layer, Redacted } from "effect";
-import { ClientEnv } from "@/lib/env/client";
+import { ServerEnv } from "@/lib/env/server";
 import { Rpcs } from "@/rpc/procedures/definitions";
 
 export class Protocol extends Context.Tag("@honey-pot/src/rpc/client/server/Protocol")<Protocol, RpcClient.Protocol>() {
 	static Live = Layer.unwrapEffect(
 		Effect.gen(function* () {
-			const { NextPublicVercelUrl } = yield* ClientEnv;
+			const { VercelUrl } = yield* ServerEnv;
 			return RpcClient.layerProtocolHttp({
-				url: `${Redacted.value(NextPublicVercelUrl)}/api/rpc`,
+				url: `${Redacted.value(VercelUrl)}/api/rpc`,
 			}).pipe(Layer.provide([FetchHttpClient.layer, RpcSerialization.layerJson]));
-		}).pipe(Effect.provide(ClientEnv.Default)),
+		}).pipe(Effect.provide(ServerEnv.Live)),
 	);
 
 	static Test = RpcClient.layerProtocolHttp({
