@@ -1,3 +1,5 @@
+"use client";
+
 import { Config, Effect } from "effect";
 
 export class ClientEnv extends Effect.Service<ClientEnv>()("@honey-pot/src/lib/env/client/ClientEnv", {
