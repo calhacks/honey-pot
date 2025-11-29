@@ -11,8 +11,5 @@ export class ClientEnv extends Effect.Service<ClientEnv>()("@honey-pot/src/lib/e
 			NextPublicVercelUrl: Config.redacted(NextPublicVercelUrl),
 		});
 		return config;
-	}).pipe(
-		Effect.tap(Effect.annotateCurrentSpan),
-		Effect.tapErrorCause((error) => Effect.annotateCurrentSpan({ error: error.toJSON() })),
-	),
+	}).pipe(Effect.tap(Effect.log), Effect.tapErrorCause(Effect.logError)),
 }) {}
