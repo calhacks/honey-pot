@@ -1,8 +1,8 @@
-import { ServerRpcClient } from "@/rpc/client/server";
+import { BrowserRpcClient } from "@/rpc/client/browser";
 
 const GetCurrentProfileKey = "get-current-profile";
 
-export const GetCurrentProfileAtom = ServerRpcClient.query(
+export const GetCurrentProfileAtom = BrowserRpcClient.query(
 	"GetCurrentProfile",
 	{},
 	{ reactivityKeys: [GetCurrentProfileKey] },

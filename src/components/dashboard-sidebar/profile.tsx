@@ -62,8 +62,8 @@ export default function SidebarProfile() {
 									),
 									onWaiting: () => (
 										<>
-											<Skeleton className="h-3 w-20" />
-											<Skeleton className="h-3 w-20" />
+											{/*<Skeleton className="h-3 w-20" />
+											<Skeleton className="h-3 w-20" />*/}
 										</>
 									),
 								})}

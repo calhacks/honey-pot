@@ -15,7 +15,6 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SidebarMenuButton } from "@/components/ui/sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function EventDropdown() {
@@ -43,7 +42,8 @@ export default function EventDropdown() {
 								onError: () => "",
 								onSuccess: (event) =>
 									Option.match(event.value, { onNone: () => "", onSome: (event) => event.title }),
-								onWaiting: () => <Skeleton className="h-5 w-20" />,
+								// onWaiting: () => <Skeleton className="h-5 w-20" />,
+								onWaiting: () => "",
 							})}
 						</span>
 					</div>
@@ -79,12 +79,12 @@ export default function EventDropdown() {
 								<span className="truncate">{event.title}</span>
 							</DropdownMenuItem>
 						)),
-					onWaiting: () => (
-						<DropdownMenuItem className="gap-2 p-2">
-							<Skeleton className="size-6" />
-							<Skeleton className="h-5 w-20" />
-						</DropdownMenuItem>
-					),
+					onWaiting: () =>
+						// <DropdownMenuItem className="gap-2 p-2">
+						// 	<Skeleton className="size-6" />
+						// 	<Skeleton className="h-5 w-20" />
+						// </DropdownMenuItem>
+						"",
 				})}
 			</DropdownMenuContent>
 		</DropdownMenu>

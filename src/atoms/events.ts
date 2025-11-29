@@ -1,11 +1,11 @@
 import { Atom, Result } from "@effect-atom/atom-react";
 import { Array, Option, pipe } from "effect";
 import { LocalStorageActiveEventIdAtom } from "@/atoms/local-storage";
-import { ServerRpcClient } from "@/rpc/client/server";
+import { BrowserRpcClient } from "@/rpc/client/browser";
 
 const GetAllEventsKey = "get-all-events";
 
-export const GetAllEventsAtom = ServerRpcClient.query("GetAllEvents", {}, { reactivityKeys: [GetAllEventsKey] });
+export const GetAllEventsAtom = BrowserRpcClient.query("GetAllEvents", {}, { reactivityKeys: [GetAllEventsKey] });
 
 export const ActiveEventAtom = Atom.make((get) => {
 	const events = get(GetAllEventsAtom);
