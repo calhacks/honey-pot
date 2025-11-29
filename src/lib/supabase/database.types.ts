@@ -8,11 +8,59 @@ export type Database = {
 	};
 	public: {
 		Tables: {
+			events: {
+				Row: {
+					avatar_url: string | null;
+					created_at: string;
+					created_by: string | null;
+					description: string | null;
+					ends_at: string | null;
+					id: string;
+					landing_page_absolute_url: string | null;
+					live_site_absolute_url: string | null;
+					slug: string;
+					starts_at: string | null;
+					title: string;
+					updated_at: string;
+				};
+				Insert: {
+					avatar_url?: string | null;
+					created_at?: string;
+					created_by?: string | null;
+					description?: string | null;
+					ends_at?: string | null;
+					id?: string;
+					landing_page_absolute_url?: string | null;
+					live_site_absolute_url?: string | null;
+					slug: string;
+					starts_at?: string | null;
+					title: string;
+					updated_at?: string;
+				};
+				Update: {
+					avatar_url?: string | null;
+					created_at?: string;
+					created_by?: string | null;
+					description?: string | null;
+					ends_at?: string | null;
+					id?: string;
+					landing_page_absolute_url?: string | null;
+					live_site_absolute_url?: string | null;
+					slug?: string;
+					starts_at?: string | null;
+					title?: string;
+					updated_at?: string;
+				};
+				Relationships: [];
+			};
 			profiles: {
 				Row: {
 					avatar_url: string | null;
 					created_at: string;
+					email: string | null;
+					first_name: string | null;
 					id: string;
+					last_name: string | null;
 					role: string;
 					updated_at: string;
 					user_id: string;
@@ -20,7 +68,10 @@ export type Database = {
 				Insert: {
 					avatar_url?: string | null;
 					created_at?: string;
+					email?: string | null;
+					first_name?: string | null;
 					id?: string;
+					last_name?: string | null;
 					role?: string;
 					updated_at?: string;
 					user_id: string;
@@ -28,7 +79,10 @@ export type Database = {
 				Update: {
 					avatar_url?: string | null;
 					created_at?: string;
+					email?: string | null;
+					first_name?: string | null;
 					id?: string;
+					last_name?: string | null;
 					role?: string;
 					updated_at?: string;
 					user_id?: string;

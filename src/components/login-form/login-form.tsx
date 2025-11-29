@@ -1,11 +1,13 @@
 "use client";
 
+import { useAtomSet } from "@effect-atom/atom-react";
 import { effectTsResolver } from "@hookform/resolvers/effect-ts";
-import { Schema } from "effect";
+import { Exit, Schema } from "effect";
 import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import Logo from "@/assets/images/logo.svg";
+import { SendMagicLinkAtom } from "@/atoms/auth";
 import { LoginGoogleButton } from "@/components/login-form/login-google-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,10 +15,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
-import { useSendMagicLink } from "@/hooks/use-login";
 
 export default function LoginForm() {
-	const { trigger: sendMagicLink } = useSendMagicLink();
+	const sendMagicLink = useAtomSet(SendMagicLinkAtom, { mode: "promiseExit" });
 
 	const form = useForm<EmailForm>({
 		resolver: effectTsResolver(EmailFormSchema),
@@ -26,16 +27,16 @@ export default function LoginForm() {
 	});
 
 	async function onSubmit(emailForm: EmailForm) {
-		await sendMagicLink({
-			email: emailForm.email,
-			onSuccess: () => {
-				toast.success("Sent");
-			},
-			onError: (_error) => {
+		const magicLinkResult = await sendMagicLink({
+			payload: { email: emailForm.email },
+		});
+
+		Exit.match(magicLinkResult, {
+			onFailure: () =>
 				form.setError("email", {
 					message: "Error sending OTP. Please try again.",
-				});
-			},
+				}),
+			onSuccess: () => toast.success("Sent"),
 		});
 	}
 
@@ -43,7 +44,7 @@ export default function LoginForm() {
 		<Card className="w-full max-w-sm">
 			<CardHeader className="place-items-center gap-4">
 				<Image src={Logo} alt="Hackathons at Berkeley logo" height={50} />
-				<CardTitle className="font-sf font-semibold sm:text-2xl text-center text-balance">
+				<CardTitle className="text-balance text-center font-semibold font-sf sm:text-2xl">
 					Event Portal
 				</CardTitle>
 			</CardHeader>

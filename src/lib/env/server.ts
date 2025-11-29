@@ -98,7 +98,10 @@ export class ServerEnv extends Context.Tag("@honey-pot/src/lib/env/server/Server
 			});
 
 			return config;
-		}),
+		}).pipe(
+			Effect.tap(Effect.annotateCurrentSpan),
+			Effect.tapErrorCause((error) => Effect.annotateCurrentSpan({ error: error.toJSON() })),
+		),
 	);
 
 	static Test = Layer.effect(

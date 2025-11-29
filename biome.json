@@ -8,6 +8,22 @@
     "lineWidth": 120,
     "lineEnding": "lf"
   },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": false,
+      "nursery": {
+        "useSortedClasses": {
+          "level": "warn",
+          "fix": "unsafe",
+          "options": {
+            "attributes": ["classList"],
+            "functions": ["clsx", "cva"]
+          }
+        }
+      }
+    }
+  },
   "javascript": {
     "formatter": {
       "arrowParentheses": "always",

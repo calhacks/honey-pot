@@ -1,8 +1,8 @@
 import { Data, Effect, pipe } from "effect";
-import { SupabaseServerClient } from "@/lib/supabase/client/server";
+import { SupabaseServerClient } from "@/lib/supabase/client";
 import { BadGateway } from "@/schema/http";
 
-export class SupabaseUser extends Effect.Service<SupabaseUser>()("@honey-pot/src/lib/utils/supabase/SupabaseUser", {
+export class SupabaseUser extends Effect.Service<SupabaseUser>()("@honey-pot/src/lib/supabase/user/SupabaseUser", {
 	dependencies: [SupabaseServerClient.Live],
 
 	effect: Effect.gen(function* () {
