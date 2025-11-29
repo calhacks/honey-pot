@@ -3,16 +3,16 @@
 import { useAtomSet } from "@effect-atom/atom-react";
 import { Exit } from "effect";
 import { toast } from "sonner";
+import { GoogleOAuthLoginAtom } from "@/atoms/auth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/tailwind/utils";
-import { BrowserRpcClient } from "@/rpc/client/browser";
 
 interface LoginButtonProps {
 	className?: string;
 }
 
 export function LoginGoogleButton(props: LoginButtonProps) {
-	const googleLogin = useAtomSet(BrowserRpcClient.mutation("GoogleOAuthLogin"), { mode: "promiseExit" });
+	const googleLogin = useAtomSet(GoogleOAuthLoginAtom, { mode: "promiseExit" });
 
 	return (
 		<Button

@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import Logo from "@/assets/images/logo.svg";
+import { SendMagicLinkAtom } from "@/atoms/auth";
 import { LoginGoogleButton } from "@/components/login-form/login-google-button";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -14,10 +15,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
-import { BrowserRpcClient } from "@/rpc/client/browser";
 
 export default function LoginForm() {
-	const sendMagicLink = useAtomSet(BrowserRpcClient.mutation("SendMagicLink"), { mode: "promiseExit" });
+	const sendMagicLink = useAtomSet(SendMagicLinkAtom, { mode: "promiseExit" });
 
 	const form = useForm<EmailForm>({
 		resolver: effectTsResolver(EmailFormSchema),
