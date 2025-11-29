@@ -11,7 +11,7 @@
     "lint": "pnpx oxlint src --config .oxlintrc.json --tsconfig tsconfig.json",
     "lint:fix": "pnpx oxlint src --config .oxlintrc.json --tsconfig tsconfig.json --fix",
     "fmt": "pnpm exec biome format src",
-    "fmt:fix": "pnpm exec biome format src --write",
+    "fmt:fix": "pnpm exec biome lint src --only=nursery/useSortedClasses --write --unsafe && pnpm exec biome format src --write",
     "gen:supabase": "pnpx supabase gen types --lang=typescript --project-id=xyjjpwufeehopwdiqphr --schema=public >  src/lib/supabase/database.types.ts && pnpm exec biome format src/lib/supabase/database.types.ts --write",
     "env": "vercel env pull .env.local",
     "env:testing": "vercel env pull --environment=\"testing\" .env.test.local"

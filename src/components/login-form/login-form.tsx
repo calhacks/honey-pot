@@ -44,7 +44,7 @@ export default function LoginForm() {
 		<Card className="w-full max-w-sm">
 			<CardHeader className="place-items-center gap-4">
 				<Image src={Logo} alt="Hackathons at Berkeley logo" height={50} />
-				<CardTitle className="font-sf font-semibold sm:text-2xl text-center text-balance">
+				<CardTitle className="text-balance text-center font-semibold font-sf sm:text-2xl">
 					Event Portal
 				</CardTitle>
 			</CardHeader>

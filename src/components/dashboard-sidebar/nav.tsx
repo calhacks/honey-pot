@@ -17,7 +17,7 @@ export default function SidebarNav() {
 					<SidebarMenuItem>
 						<SidebarMenuButton
 							tooltip="Create event"
-							className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground duration-200 ease-in-out"
+							className="bg-primary text-primary-foreground duration-200 ease-in-out hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
 						>
 							<IconCirclePlusFilled />
 							<span>Create event</span>

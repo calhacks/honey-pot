@@ -39,7 +39,7 @@ export default function SidebarProfile() {
 				<DropdownMenu>
 					<DropdownMenuTrigger asChild>
 						<SidebarMenuButton size="lg">
-							<Avatar className="h-8 w-8 rounded-sm shrink-0">
+							<Avatar className="h-8 w-8 shrink-0 rounded-sm">
 								<AvatarImage src={profileAvatarUrl} alt="Profile avatar" />
 								<AvatarFallback className="rounded-sm">
 									<IconQuestionMark className="size-5" />
@@ -79,7 +79,7 @@ export default function SidebarProfile() {
 					>
 						<DropdownMenuLabel className="font-normal">
 							<div className="flex items-center gap-2 text-left">
-								<Avatar className="h-8 w-8 rounded-sm shrink-0">
+								<Avatar className="h-8 w-8 shrink-0 rounded-sm">
 									<AvatarImage src={profileAvatarUrl} alt="Profile avatar" />
 									<AvatarFallback className="rounded-sm">
 										<IconQuestionMark className="size-5" />

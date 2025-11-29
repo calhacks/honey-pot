@@ -69,7 +69,7 @@ export default function EventDropdown() {
 								onClick={() => setActiveEventId(event.id)}
 								className="gap-2 p-2"
 							>
-								<Avatar className="h-6 w-6 rounded-sm shrink-0">
+								<Avatar className="h-6 w-6 shrink-0 rounded-sm">
 									<AvatarImage src={event.avatar_url ?? undefined} className="size-5" />
 									<AvatarFallback>
 										<IconQuestionMark className="size-4" />
