@@ -1,5 +1,6 @@
 import { Rpc, RpcGroup } from "@effect/rpc";
 import { Schema } from "effect";
+import { RateLimiterTag } from "@/rpc/middleware/rate-limit/context";
 
 export const SendMagicLink = Rpc.make("SendMagicLink", {
 	success: Schema.Undefined,
@@ -21,4 +22,4 @@ export const SignOut = Rpc.make("SignOut", {
 	payload: Schema.Struct({}),
 });
 
-export class LoginRpcs extends RpcGroup.make(SendMagicLink, GoogleOAuthLogin, SignOut) {}
+export class AuthRpcs extends RpcGroup.make(SendMagicLink, GoogleOAuthLogin, SignOut).middleware(RateLimiterTag) {}

@@ -61,7 +61,7 @@ export type Database = {
 					first_name: string | null;
 					id: string;
 					last_name: string | null;
-					role: string;
+					role_id: string | null;
 					updated_at: string;
 					user_id: string;
 				};
@@ -72,7 +72,7 @@ export type Database = {
 					first_name?: string | null;
 					id?: string;
 					last_name?: string | null;
-					role?: string;
+					role_id?: string | null;
 					updated_at?: string;
 					user_id: string;
 				};
@@ -83,9 +83,35 @@ export type Database = {
 					first_name?: string | null;
 					id?: string;
 					last_name?: string | null;
-					role?: string;
+					role_id?: string | null;
 					updated_at?: string;
 					user_id?: string;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "profiles_role_id_fkey";
+						columns: ["role_id"];
+						isOneToOne: false;
+						referencedRelation: "roles";
+						referencedColumns: ["id"];
+					},
+				];
+			};
+			roles: {
+				Row: {
+					id: string;
+					label: string;
+					slug: string;
+				};
+				Insert: {
+					id?: string;
+					label: string;
+					slug: string;
+				};
+				Update: {
+					id?: string;
+					label?: string;
+					slug?: string;
 				};
 				Relationships: [];
 			};

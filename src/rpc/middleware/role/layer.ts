@@ -2,11 +2,11 @@ import { Console, Effect, Layer, pipe, Schema } from "effect";
 import { ServerEnv } from "@/lib/env/server";
 import { SupabaseServerClient } from "@/lib/supabase/client";
 import { SupabaseUser } from "@/lib/supabase/user";
-import { AdminUser, AuthenticatedUser } from "@/rpc/middleware/context";
-import { BadGateway, Forbidden, type HttpError, InternalServerError, NotFound, Unauthorized } from "@/schema/http";
-import { AdminProfile, Profile } from "@/schema/supabase";
+import { AdminUser, AuthenticatedUser } from "@/rpc/middleware/role/context";
+import { BadGateway, Forbidden, InternalServerError, NotFound, Unauthorized } from "@/schema/http";
+import { Profile, RoleSlugs } from "@/schema/supabase";
 
-export const AuthenticatedUserMiddleware: Layer.Layer<AuthenticatedUser, HttpError> = Layer.succeed(
+export const AuthenticatedUserMiddleware: Layer.Layer<AuthenticatedUser> = Layer.succeed(
 	AuthenticatedUser,
 	AuthenticatedUser.of(() =>
 		Effect.gen(function* () {
@@ -18,13 +18,13 @@ export const AuthenticatedUserMiddleware: Layer.Layer<AuthenticatedUser, HttpErr
 				catch: () => BadGateway.make({ message: "Failed to fetch profile" }),
 			});
 
-			const profile = yield* pipe(
+			yield* pipe(
 				Effect.fromNullable(profileResponse.data),
 				Effect.andThen(Schema.decodeUnknown(Profile)),
 				Effect.orElseFail(() => Forbidden.make({ message: "Profile not found" })),
 			);
 
-			return profile;
+			return Schema.Void;
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
 			Effect.provide(SupabaseServerClient.Live),
@@ -38,27 +38,35 @@ export const AuthenticatedUserMiddleware: Layer.Layer<AuthenticatedUser, HttpErr
 	),
 );
 
-export const AdminUserMiddleware: Layer.Layer<AdminUser, HttpError> = Layer.succeed(
+export const AdminUserMiddleware = Layer.succeed(
 	AdminUser,
 	AdminUser.of(() =>
 		Effect.gen(function* () {
-			const supabase = yield* SupabaseServerClient;
 			const user = yield* SupabaseUser;
+			const supabase = yield* SupabaseServerClient;
 
-			const profileResponse = yield* Effect.tryPromise({
-				try: () => supabase.from("profiles").select().eq("user_id", user.id).single(),
+			const profileRoleResponse = yield* Effect.tryPromise({
+				try: () =>
+					supabase
+						.from("profiles")
+						.select(`
+				  *,
+				  roles ( slug )
+				`)
+						.eq("user_id", user.id)
+						.single(),
 				catch: () => BadGateway.make({ message: "Failed to fetch profile" }),
 			});
 
-			const profile = yield* Effect.fromNullable(profileResponse.data).pipe(
+			const profileRole = yield* Effect.fromNullable(profileRoleResponse.data).pipe(
 				Effect.orElseFail(() => Forbidden.make({ message: "Profile not found" })),
 			);
 
-			const adminProfile = yield* Schema.decodeUnknown(AdminProfile)(profile).pipe(
+			yield* Schema.decodeUnknown(RoleSlugs.pipe(Schema.pickLiteral("admin")))(profileRole.roles?.slug).pipe(
 				Effect.orElseFail(() => Unauthorized.make({ message: "Not authorized" })),
 			);
 
-			return adminProfile;
+			return Schema.Void;
 		}).pipe(
 			Effect.tapErrorCause(Console.error),
 			Effect.provide(SupabaseServerClient.Live),

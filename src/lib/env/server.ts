@@ -20,6 +20,8 @@ export type ServerEnvType = {
 
 	GoogleClientId: Redacted.Redacted<string>;
 	GoogleClientSecret: Redacted.Redacted<string>;
+
+	RedisUrl: Redacted.Redacted<typeof Schema.URL.Type>;
 };
 
 export class ServerEnv extends Context.Tag("@honey-pot/src/lib/env/server/ServerEnv")<ServerEnv, ServerEnvType>() {
@@ -77,6 +79,11 @@ export class ServerEnv extends Context.Tag("@honey-pot/src/lib/env/server/Server
 				Config.orElse(() => Config.nonEmptyString(process.env.GOOGLE_CLIENT_SECRET)),
 			);
 
+			const RedisUrl = Config.nonEmptyString("REDIS_URL").pipe(
+				Config.orElse(() => Config.nonEmptyString(process.env.REDIS_URL)),
+				Config.map(Schema.decodeSync(Schema.URL)),
+			);
+
 			const config = yield* Config.all({
 				VercelEnvironment: Config.redacted(VercelEnvironment),
 				VercelGitCommitSha: Config.redacted(VercelGitCommitSha),
@@ -95,6 +102,8 @@ export class ServerEnv extends Context.Tag("@honey-pot/src/lib/env/server/Server
 
 				GoogleClientId: Config.redacted(GoogleClientId),
 				GoogleClientSecret: Config.redacted(GoogleClientSecret),
+
+				RedisUrl: Config.redacted(RedisUrl),
 			});
 
 			return config;
@@ -140,6 +149,9 @@ export class ServerEnv extends Context.Tag("@honey-pot/src/lib/env/server/Server
 			const GoogleClientId = Config.succeed("");
 			const GoogleClientSecret = Config.succeed("");
 
+			// TODO: Setup Redis testing environment
+			const RedisUrl = Config.succeed(new URL(""));
+
 			const config = yield* Config.all({
 				VercelEnvironment: Config.redacted(VercelEnvironment),
 				VercelGitCommitSha: Config.redacted(VercelGitCommitSha),
@@ -158,6 +170,8 @@ export class ServerEnv extends Context.Tag("@honey-pot/src/lib/env/server/Server
 
 				GoogleClientId: Config.redacted(GoogleClientId),
 				GoogleClientSecret: Config.redacted(GoogleClientSecret),
+
+				RedisUrl: Config.redacted(RedisUrl),
 			});
 
 			return config;

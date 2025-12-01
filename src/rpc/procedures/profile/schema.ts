@@ -1,6 +1,7 @@
 import { Rpc, RpcGroup } from "@effect/rpc";
 import { Schema } from "effect";
-import { AdminUser, AuthenticatedUser } from "@/rpc/middleware/context";
+import { RateLimiterTag } from "@/rpc/middleware/rate-limit/context";
+import { AdminUser, AuthenticatedUser } from "@/rpc/middleware/role/context";
 import { Profile } from "@/schema/supabase";
 
 export const GetAllProfiles = Rpc.make("GetAllProfiles", {
@@ -32,7 +33,7 @@ export const CreateProfile = Rpc.make("CreateProfile", {
 	error: Schema.Unknown,
 	payload: Schema.Struct({
 		user_id: Profile.fields.user_id,
-		role: Profile.fields.role,
+		role_id: Profile.fields.role_id,
 		avatar_url: Profile.fields.avatar_url,
 	}),
 }).middleware(AdminUser);
@@ -42,7 +43,7 @@ export const UpdateProfile = Rpc.make("UpdateProfile", {
 	// TODO: proper failure types
 	error: Schema.Unknown,
 	payload: Schema.Struct({
-		role: Schema.optionalWith(Profile.fields.role, { exact: true }),
+		role_id: Schema.optionalWith(Profile.fields.role_id, { exact: true }),
 		avatar_url: Schema.optionalWith(Profile.fields.avatar_url, { exact: true }),
 	}),
 }).middleware(AuthenticatedUser);
@@ -63,4 +64,4 @@ export class ProfileRpcs extends RpcGroup.make(
 	CreateProfile,
 	UpdateProfile,
 	DeleteProfile,
-) {}
+).middleware(RateLimiterTag) {}

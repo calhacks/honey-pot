@@ -1,6 +1,7 @@
 import { Rpc, RpcGroup } from "@effect/rpc";
 import { Schema } from "effect";
-import { AdminUser } from "@/rpc/middleware/context";
+import { RateLimiterTag } from "@/rpc/middleware/rate-limit/context";
+import { AdminUser } from "@/rpc/middleware/role/context";
 import { Event } from "@/schema/supabase";
 
 export const GetAllEvents = Rpc.make("GetAllEvents", {
@@ -13,4 +14,4 @@ export type GetAllEventsSuccess = Rpc.Success<typeof GetAllEvents>;
 export type GetAllEventsError = Rpc.Error<typeof GetAllEvents>;
 export type GetAllEventsPayload = Rpc.Payload<typeof GetAllEvents>;
 
-export class EventRpcs extends RpcGroup.make(GetAllEvents) {}
+export class EventRpcs extends RpcGroup.make(GetAllEvents).middleware(RateLimiterTag) {}

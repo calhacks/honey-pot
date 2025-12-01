@@ -1,23 +1,5 @@
 import { Schema } from "effect";
 
-export const ProfileRole = Schema.Literal("admin", "team", "staff", "hacker");
-
-export const Profile = Schema.Struct({
-	id: Schema.UUID,
-	user_id: Schema.UUID,
-	created_at: Schema.DateTimeUtc,
-	updated_at: Schema.DateTimeUtc,
-	role: ProfileRole,
-	avatar_url: Schema.NullOr(Schema.String),
-	first_name: Schema.NullOr(Schema.String),
-	last_name: Schema.NullOr(Schema.String),
-	email: Schema.NullOr(Schema.String),
-});
-export type Profile = typeof Profile.Type;
-
-export const AdminProfile = Profile.pipe(Schema.filter((profile) => profile.role === "admin"));
-export type AdminProfile = typeof AdminProfile.Type;
-
 export const Event = Schema.Struct({
 	id: Schema.UUID,
 	created_at: Schema.DateTimeUtc,
@@ -33,3 +15,25 @@ export const Event = Schema.Struct({
 	avatar_url: Schema.NullOr(Schema.String),
 });
 export type Event = typeof Event.Type;
+
+export const Profile = Schema.Struct({
+	id: Schema.UUID,
+	user_id: Schema.UUID,
+	created_at: Schema.DateTimeUtc,
+	updated_at: Schema.DateTimeUtc,
+	avatar_url: Schema.NullOr(Schema.String),
+	first_name: Schema.NullOr(Schema.String),
+	last_name: Schema.NullOr(Schema.String),
+	email: Schema.NullOr(Schema.String),
+	role_id: Schema.NullOr(Schema.UUID),
+});
+export type Profile = typeof Profile.Type;
+
+export const RoleSlugs = Schema.Literal("admin", "team", "staff", "hacker");
+export const RoleLabels = Schema.Literal("Admin", "Team", "Staff", "Hacker");
+
+export const Role = Schema.Struct({
+	id: Schema.UUID,
+	slug: RoleSlugs,
+	label: RoleLabels,
+});

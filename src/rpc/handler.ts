@@ -1,7 +1,8 @@
 import { HttpServer } from "@effect/platform";
 import { RpcSerialization, RpcServer } from "@effect/rpc";
 import { Layer } from "effect";
-import { AdminUserMiddleware, AuthenticatedUserMiddleware } from "@/rpc/middleware/middleware";
+import { RateLimiterMiddleware } from "@/rpc/middleware/rate-limit/layer";
+import { AdminUserMiddleware, AuthenticatedUserMiddleware } from "@/rpc/middleware/role/layer";
 import { Procedures } from "@/rpc/procedures";
 import { Rpcs } from "@/rpc/procedures/definitions";
 
@@ -10,6 +11,7 @@ export const { handler, dispose } = RpcServer.toWebHandler(Rpcs, {
 		Procedures,
 		AdminUserMiddleware,
 		AuthenticatedUserMiddleware,
+		RateLimiterMiddleware,
 		RpcSerialization.layerJson,
 		HttpServer.layerContext,
 	),
