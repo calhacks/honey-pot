@@ -5,7 +5,7 @@ import { ServerEnv } from "@/lib/env/server";
 import { SupabaseServerClient } from "@/lib/supabase/client";
 
 export default async function AuthedLayout({ children }: PropsWithChildren) {
-	const result = await Effect.gen(function* () {
+	const redirectResult = await Effect.gen(function* () {
 		const client = yield* SupabaseServerClient;
 
 		const user = yield* pipe(
@@ -21,17 +21,16 @@ export default async function AuthedLayout({ children }: PropsWithChildren) {
 		);
 	}).pipe(Effect.provide(SupabaseServerClient.Live), Effect.provide(ServerEnv.Live), Effect.runPromiseExit);
 
-	return Exit.match(result, {
-		onFailure: (cause) => {
-			Cause.match(cause, {
-				onDie: () => redirect("/login"),
-				onEmpty: () => children,
-				onFail: (fail) => (typeof fail === "string" ? redirect(fail) : redirect("/login")),
-				onInterrupt: () => redirect("/login"),
-				onParallel: () => redirect("/login"),
-				onSequential: () => redirect("/login"),
-			});
-		},
-		onSuccess: () => children,
-	});
+	if (Exit.isFailure(redirectResult)) {
+		Cause.match(redirectResult.cause, {
+			onDie: () => redirect("/login"),
+			onEmpty: () => {},
+			onFail: (fail) => redirect(typeof fail === "string" ? fail : "/login"),
+			onInterrupt: () => redirect("/login"),
+			onParallel: () => redirect("/login"),
+			onSequential: () => redirect("/login"),
+		});
+	}
+
+	return <>{children}</>;
 }

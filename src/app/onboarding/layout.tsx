@@ -25,17 +25,15 @@ export default async function OnboardingLayout({ children }: PropsWithChildren) 
 		);
 	}).pipe(Effect.provide(SupabaseServerClient.Live), Effect.provide(ServerEnv.Live), Effect.runPromiseExit);
 
-	return Exit.match(result, {
-		onFailure: (cause) => {
-			Cause.match(cause, {
-				onDie: () => redirect("/login"),
-				onEmpty: () => children,
-				onFail: (fail) => (typeof fail === "string" ? redirect(fail) : redirect("/login")),
-				onInterrupt: () => redirect("/login"),
-				onParallel: () => redirect("/login"),
-				onSequential: () => redirect("/login"),
-			});
-		},
-		onSuccess: () => children,
-	});
+	if (Exit.isFailure(result)) {
+		Cause.match(result.cause, {
+			onDie: () => redirect("/login"),
+			onEmpty: () => {},
+			onFail: (fail) => redirect(typeof fail === "string" ? fail : "/login"),
+			onInterrupt: () => redirect("/login"),
+			onParallel: () => redirect("/login"),
+			onSequential: () => redirect("/login"),
+		});
+	}
+	return <>{children}</>;
 }
