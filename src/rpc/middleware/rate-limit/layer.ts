@@ -21,7 +21,6 @@ export const Cache = Layer.unwrapEffect(
 	}).pipe(Effect.provide(ServerEnv.Live)),
 );
 
-// export const RateLimiterLayer = RateLimiter.layer.pipe(Layer.provide(Cache.pipe(Layer.provide(ServerEnv.Live))));
 export const RateLimiterLayer = RateLimiter.layer.pipe(Layer.provide(Cache));
 
 export const RateLimiterMiddleware = Layer.succeed(

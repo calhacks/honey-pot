@@ -1,17 +1,18 @@
 "use client";
 
 import { useAtomSet } from "@effect-atom/atom-react";
+import { IconBrandGoogleFilled } from "@tabler/icons-react";
 import { Exit } from "effect";
 import { toast } from "sonner";
 import { GoogleOAuthLoginAtom } from "@/atoms/auth";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/tailwind/utils";
 
-interface LoginButtonProps {
+type LoginButtonProps = {
 	className?: string;
-}
+} & React.ComponentProps<"button">;
 
-export function LoginGoogleButton(props: LoginButtonProps) {
+export function LoginGoogleButton({ className, ...props }: LoginButtonProps) {
 	const googleLogin = useAtomSet(GoogleOAuthLoginAtom, { mode: "promiseExit" });
 
 	return (
@@ -24,9 +25,10 @@ export function LoginGoogleButton(props: LoginButtonProps) {
 				});
 			}}
 			variant="outline"
-			className={cn(props.className)}
+			className={cn(className)}
+			{...props}
 		>
-			Continue with Google
+			<IconBrandGoogleFilled className="size-4 fill-accent-foreground" /> Continue with Google
 		</Button>
 	);
 }

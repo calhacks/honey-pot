@@ -4,16 +4,15 @@ import { useAtomSet } from "@effect-atom/atom-react";
 import { effectTsResolver } from "@hookform/resolvers/effect-ts";
 import { Exit, Schema } from "effect";
 import Image from "next/image";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import Logo from "@/assets/images/logo.svg";
 import { SendMagicLinkAtom } from "@/atoms/auth";
 import { LoginGoogleButton } from "@/components/login-form/login-google-button";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Field, FieldError, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field";
+import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
 import { Spinner } from "@/components/ui/spinner";
 
 export default function LoginForm() {
@@ -26,7 +25,7 @@ export default function LoginForm() {
 		},
 	});
 
-	async function onSubmit(emailForm: EmailForm) {
+	async function submitEmail(emailForm: EmailForm) {
 		const magicLinkResult = await sendMagicLink({
 			payload: { email: emailForm.email },
 		});
@@ -41,49 +40,44 @@ export default function LoginForm() {
 	}
 
 	return (
-		<Card className="w-full max-w-sm">
-			<CardHeader className="place-items-center gap-4">
-				<Image src={Logo} alt="Hackathons at Berkeley logo" height={50} />
-				<CardTitle className="text-balance text-center font-semibold font-sf sm:text-2xl">
-					Event Portal
-				</CardTitle>
-			</CardHeader>
+		<Form {...form}>
+			<form id="login-form" onSubmit={form.handleSubmit(submitEmail)} className="flex flex-col gap-6">
+				<FieldGroup>
+					<div className="flex flex-col items-center gap-2">
+						<Image src={Logo} alt="Hackathons at Berkeley logo" height={60} />
+					</div>
+				</FieldGroup>
 
-			<CardContent className="flex flex-col gap-5">
-				<div className="flex flex-col items-center gap-2">
-					<LoginGoogleButton className="w-full" />
-				</div>
+				<Controller
+					name="email"
+					control={form.control}
+					render={({ field, fieldState }) => (
+						<Field aria-invalid={fieldState.invalid}>
+							<FieldLabel htmlFor="login-form-email">Email</FieldLabel>
+							<Input
+								{...field}
+								id="login-form-email"
+								type="email"
+								aria-invalid={fieldState.invalid}
+								placeholder="oski@berkeley.edu"
+								required
+							/>
+							{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+						</Field>
+					)}
+				/>
 
-				<Separator />
+				<Field>
+					<Button type="submit" form="login-form" disabled={form.formState.isSubmitting}>
+						{form.formState.isSubmitting ? <Spinner /> : "Create Account"}
+					</Button>
+				</Field>
 
-				<Form {...form}>
-					<form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3">
-						<FormField
-							control={form.control}
-							name="email"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Email</FormLabel>
-									<FormControl>
-										<Input placeholder="oski@berkeley.edu" {...field} />
-									</FormControl>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+				<FieldSeparator>Or</FieldSeparator>
 
-						<Button
-							type="submit"
-							variant="default"
-							disabled={form.formState.isSubmitting}
-							className="w-full"
-						>
-							{form.formState.isSubmitting ? <Spinner /> : "Log in"}
-						</Button>
-					</form>
-				</Form>
-			</CardContent>
-		</Card>
+				<LoginGoogleButton type="button" />
+			</form>
+		</Form>
 	);
 }
 
