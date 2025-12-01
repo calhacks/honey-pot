@@ -42,7 +42,7 @@ export const RateLimiterMiddleware = Layer.succeed(
 					algorithm: "fixed-window",
 					onExceeded: "fail",
 					window: Duration.minutes(1),
-					limit: 10,
+					limit: 200,
 					key: `user_id:${user.id}`,
 				});
 			} else {
