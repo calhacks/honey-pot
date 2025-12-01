@@ -1,6 +1,6 @@
 import { RateLimiter } from "@effect/experimental";
 import * as Redis from "@effect/experimental/RateLimiter/Redis";
-import { Effect, Layer, Redacted, Schema } from "effect";
+import { Duration, Effect, Layer, Redacted, Schema } from "effect";
 import { ServerEnv } from "@/lib/env/server";
 import { SupabaseServerClient } from "@/lib/supabase/client";
 import { RateLimiterTag } from "@/rpc/middleware/rate-limit/context";
@@ -18,10 +18,11 @@ export const Cache = Layer.unwrapEffect(
 			password: url.password,
 		});
 		return result;
-	}),
+	}).pipe(Effect.provide(ServerEnv.Live)),
 );
 
-export const RateLimiterLayer = RateLimiter.layer.pipe(Layer.provide(Cache.pipe(Layer.provide(ServerEnv.Live))));
+// export const RateLimiterLayer = RateLimiter.layer.pipe(Layer.provide(Cache.pipe(Layer.provide(ServerEnv.Live))));
+export const RateLimiterLayer = RateLimiter.layer.pipe(Layer.provide(Cache));
 
 export const RateLimiterMiddleware = Layer.succeed(
 	RateLimiterTag,
@@ -35,32 +36,28 @@ export const RateLimiterMiddleware = Layer.succeed(
 				catch: () => InternalServerError.make({ message: "Could not reach Supabase" }),
 			});
 
-			yield* Effect.match(Effect.fromNullable(userResponse.data.user), {
-				onFailure: () =>
-					Effect.gen(function* () {
-						const ip = yield* Effect.fromNullable(options.headers["x-forwarded-for"]).pipe(
-							Effect.orElseFail(() =>
-								BadRequest.make({ message: "`X-Forwarded-For` header is required" }),
-							),
-						);
+			const user = userResponse.data.user;
+			if (user !== null) {
+				yield* limiter.consume({
+					algorithm: "fixed-window",
+					onExceeded: "fail",
+					window: Duration.minutes(1),
+					limit: 10,
+					key: `user_id:${user.id}`,
+				});
+			} else {
+				const ip = yield* Effect.fromNullable(options.headers["x-forwarded-for"]).pipe(
+					Effect.orElseFail(() => BadRequest.make({ message: "`X-Forwarded-For` header is required" })),
+				);
 
-						yield* limiter.consume({
-							algorithm: "fixed-window",
-							onExceeded: "fail",
-							window: "1 minute",
-							limit: 100,
-							key: ip,
-						});
-					}),
-				onSuccess: (user) =>
-					limiter.consume({
-						algorithm: "fixed-window",
-						onExceeded: "fail",
-						window: "1 minute",
-						limit: 100,
-						key: user.id,
-					}),
-			});
+				yield* limiter.consume({
+					algorithm: "fixed-window",
+					onExceeded: "fail",
+					window: Duration.minutes(1),
+					limit: 10,
+					key: `ip:${ip}`,
+				});
+			}
 
 			return Schema.Void;
 		}).pipe(
