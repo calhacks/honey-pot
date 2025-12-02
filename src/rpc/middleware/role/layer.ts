@@ -4,7 +4,7 @@ import { SupabaseServerClient } from "@/lib/supabase/client";
 import { SupabaseUser } from "@/lib/supabase/user";
 import { AdminUser, AuthenticatedUser } from "@/rpc/middleware/role/context";
 import { BadGateway, Forbidden, InternalServerError, NotFound, Unauthorized } from "@/schema/http";
-import { Profile, RoleSlugs } from "@/schema/supabase";
+import { Profile } from "@/schema/supabase";
 
 export const AuthenticatedUserMiddleware: Layer.Layer<AuthenticatedUser> = Layer.succeed(
 	AuthenticatedUser,

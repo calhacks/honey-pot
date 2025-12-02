@@ -1,11 +1,11 @@
 import { Schema } from "effect";
+import { FileFromSelf } from "@/schema/lib";
 
 export function OnboardingForm() {}
 
 const OnboardingFormSchema = Schema.Struct({
-	email: Schema.String.pipe(
-		Schema.nonEmptyString({ message: () => "Email is required" }),
-		Schema.pattern(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, { message: () => "Invalid email address" }),
-	),
+	firstName: Schema.String.pipe(Schema.nonEmptyString({ message: () => "Enter first name" })),
+	lastName: Schema.String.pipe(Schema.nonEmptyString({ message: () => "Enter last name" })),
+	avatarUrl: Schema.optional(FileFromSelf),
 });
 type OnboardingForm = typeof OnboardingFormSchema.Type;

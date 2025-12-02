@@ -131,4 +131,34 @@ export const ProfileProcedures = ProfileRpcs.toLayer({
 			Effect.provide(ServerEnv.Live),
 			Effect.provide(NodeTracer),
 		),
+
+	CreateProfileOnboarding: (request) =>
+		Effect.gen(function* () {
+			const supabase = yield* SupabaseServerClient;
+			const user = yield* SupabaseUser;
+
+			return yield* pipe(
+				Effect.tryPromise(() =>
+					supabase.from("profiles").insert({
+						user_id: user.id,
+						first_name: request.first_name,
+						last_name: request.last_name,
+						email: user.email ?? null,
+						// avatar_url: request.avatar_url,
+					}),
+				),
+				Effect.filterOrFail(
+					(response) => response.error === null,
+					(response) => response.error,
+				),
+				Effect.andThen(void 0),
+			);
+		}).pipe(
+			Effect.tapErrorCause(Console.error),
+			Effect.withSpan("@honey-pot/src/rpc/procedures/profile/layer/ProfileProcedures/CreateProfileOnboarding"),
+			Effect.provide(SupabaseServerClient.Live),
+			Effect.provide(SupabaseUser.Default),
+			Effect.provide(ServerEnv.Live),
+			Effect.provide(NodeTracer),
+		),
 });
