@@ -8,6 +8,52 @@ export type Database = {
 	};
 	public: {
 		Tables: {
+			event_profile_roles: {
+				Row: {
+					created_at: string;
+					event_id: string;
+					profile_id: string;
+					role_id: string;
+					updated_at: string;
+				};
+				Insert: {
+					created_at?: string;
+					event_id: string;
+					profile_id: string;
+					role_id: string;
+					updated_at?: string;
+				};
+				Update: {
+					created_at?: string;
+					event_id?: string;
+					profile_id?: string;
+					role_id?: string;
+					updated_at?: string;
+				};
+				Relationships: [
+					{
+						foreignKeyName: "event_attendees_event_id_fkey";
+						columns: ["event_id"];
+						isOneToOne: false;
+						referencedRelation: "events";
+						referencedColumns: ["id"];
+					},
+					{
+						foreignKeyName: "event_attendees_profile_id_fkey";
+						columns: ["profile_id"];
+						isOneToOne: false;
+						referencedRelation: "profiles";
+						referencedColumns: ["id"];
+					},
+					{
+						foreignKeyName: "event_attendees_role_id_fkey";
+						columns: ["role_id"];
+						isOneToOne: false;
+						referencedRelation: "roles";
+						referencedColumns: ["id"];
+					},
+				];
+			};
 			events: {
 				Row: {
 					avatar_url: string | null;
@@ -60,8 +106,8 @@ export type Database = {
 					email: string | null;
 					first_name: string | null;
 					id: string;
+					is_admin: boolean;
 					last_name: string | null;
-					role_id: string | null;
 					updated_at: string;
 					user_id: string;
 				};
@@ -71,8 +117,8 @@ export type Database = {
 					email?: string | null;
 					first_name?: string | null;
 					id?: string;
+					is_admin?: boolean;
 					last_name?: string | null;
-					role_id?: string | null;
 					updated_at?: string;
 					user_id: string;
 				};
@@ -82,20 +128,12 @@ export type Database = {
 					email?: string | null;
 					first_name?: string | null;
 					id?: string;
+					is_admin?: boolean;
 					last_name?: string | null;
-					role_id?: string | null;
 					updated_at?: string;
 					user_id?: string;
 				};
-				Relationships: [
-					{
-						foreignKeyName: "profiles_role_id_fkey";
-						columns: ["role_id"];
-						isOneToOne: false;
-						referencedRelation: "roles";
-						referencedColumns: ["id"];
-					},
-				];
+				Relationships: [];
 			};
 			roles: {
 				Row: {

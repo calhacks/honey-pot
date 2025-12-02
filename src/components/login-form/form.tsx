@@ -8,7 +8,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import Logo from "@/assets/images/logo.svg";
 import { SendMagicLinkAtom } from "@/atoms/auth";
-import { LoginGoogleButton } from "@/components/login-form/login-google-button";
+import { GoogleLoginButton } from "@/components/buttons/google-login";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel, FieldSeparator } from "@/components/ui/field";
 import { Form } from "@/components/ui/form";
@@ -75,7 +75,7 @@ export default function LoginForm() {
 
 				<FieldSeparator>Or</FieldSeparator>
 
-				<LoginGoogleButton type="button" />
+				<GoogleLoginButton type="button" />
 			</form>
 		</Form>
 	);

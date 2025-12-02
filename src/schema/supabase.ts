@@ -25,15 +25,23 @@ export const Profile = Schema.Struct({
 	first_name: Schema.NullOr(Schema.String),
 	last_name: Schema.NullOr(Schema.String),
 	email: Schema.NullOr(Schema.String),
-	role_id: Schema.NullOr(Schema.UUID),
+	is_admin: Schema.Boolean,
 });
 export type Profile = typeof Profile.Type;
 
-export const RoleSlugs = Schema.Literal("admin", "team", "staff", "hacker");
-export const RoleLabels = Schema.Literal("Admin", "Team", "Staff", "Hacker");
+export const RoleSlugs = Schema.Literal("organizer", "sponsor", "mentor", "volunteer", "hacker");
+export const RoleLabels = Schema.Literal("Organizer", "Sponsor", "Mentor", "Volunteer", "Hacker");
 
 export const Role = Schema.Struct({
 	id: Schema.UUID,
 	slug: RoleSlugs,
 	label: RoleLabels,
+});
+
+export const EventProfileRoles = Schema.Struct({
+	event_id: Schema.UUID,
+	profile_id: Schema.UUID,
+	role_id: Schema.UUID,
+	created_at: Schema.DateTimeUtc,
+	updated_at: Schema.DateTimeUtc,
 });

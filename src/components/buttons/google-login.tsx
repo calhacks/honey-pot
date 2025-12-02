@@ -12,7 +12,7 @@ type LoginButtonProps = {
 	className?: string;
 } & React.ComponentProps<"button">;
 
-export function LoginGoogleButton({ className, ...props }: LoginButtonProps) {
+export function GoogleLoginButton({ className, ...props }: LoginButtonProps) {
 	const googleLogin = useAtomSet(GoogleOAuthLoginAtom, { mode: "promiseExit" });
 
 	return (

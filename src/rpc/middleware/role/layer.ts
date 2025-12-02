@@ -45,26 +45,18 @@ export const AdminUserMiddleware = Layer.succeed(
 			const user = yield* SupabaseUser;
 			const supabase = yield* SupabaseServerClient;
 
-			const profileRoleResponse = yield* Effect.tryPromise({
-				try: () =>
-					supabase
-						.from("profiles")
-						.select(`
-				  *,
-				  roles ( slug )
-				`)
-						.eq("user_id", user.id)
-						.single(),
+			const profileResponse = yield* Effect.tryPromise({
+				try: () => supabase.from("profiles").select("is_admin").eq("user_id", user.id).single(),
 				catch: () => BadGateway.make({ message: "Failed to fetch profile" }),
 			});
 
-			const profileRole = yield* Effect.fromNullable(profileRoleResponse.data).pipe(
+			const profile = yield* Effect.fromNullable(profileResponse.data).pipe(
 				Effect.orElseFail(() => Forbidden.make({ message: "Profile not found" })),
 			);
 
-			yield* Schema.decodeUnknown(RoleSlugs.pipe(Schema.pickLiteral("admin")))(profileRole.roles?.slug).pipe(
-				Effect.orElseFail(() => Unauthorized.make({ message: "Not authorized" })),
-			);
+			if (!profile.is_admin) {
+				yield* Effect.fail(Unauthorized.make({ message: "Not authorized" }));
+			}
 
 			return Schema.Void;
 		}).pipe(
