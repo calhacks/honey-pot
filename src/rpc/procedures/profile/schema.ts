@@ -1,0 +1,77 @@
+import { Rpc, RpcGroup } from "@effect/rpc";
+import { Schema } from "effect";
+import { RateLimiterTag } from "@/rpc/middleware/rate-limit/context";
+import { AdminUser, AuthenticatedUser } from "@/rpc/middleware/role/context";
+import { FileFromSelf } from "@/schema/lib";
+import { Profile } from "@/schema/supabase";
+
+export const GetAllProfiles = Rpc.make("GetAllProfiles", {
+	success: Schema.Array(Profile),
+	// TODO: proper failure types
+	error: Schema.Unknown,
+	payload: Schema.Struct({}),
+});
+
+export const GetProfileById = Rpc.make("GetProfileById", {
+	success: Profile,
+	// TODO: proper failure types
+	error: Schema.Unknown,
+	payload: Schema.Struct({
+		id: Profile.fields.id,
+	}),
+}).middleware(AuthenticatedUser);
+
+export const GetCurrentProfile = Rpc.make("GetCurrentProfile", {
+	success: Profile,
+	// TODO: proper failure types
+	error: Schema.Unknown,
+	payload: Schema.Struct({}),
+}).middleware(AuthenticatedUser);
+
+export const CreateProfile = Rpc.make("CreateProfile", {
+	success: Profile,
+	// TODO: proper failure types
+	error: Schema.Unknown,
+	payload: Schema.Struct({
+		user_id: Profile.fields.user_id,
+		avatar_url: Profile.fields.avatar_url,
+	}),
+}).middleware(AdminUser);
+
+export const UpdateProfile = Rpc.make("UpdateProfile", {
+	success: Profile,
+	// TODO: proper failure types
+	error: Schema.Unknown,
+	payload: Schema.Struct({
+		avatar_url: Schema.optionalWith(Profile.fields.avatar_url, { exact: true }),
+	}),
+}).middleware(AuthenticatedUser);
+
+export const DeleteProfile = Rpc.make("DeleteProfile", {
+	success: Schema.Undefined,
+	// TODO: proper failure types
+	error: Schema.Unknown,
+	payload: Schema.Struct({
+		id: Profile.fields.id,
+	}),
+}).middleware(AdminUser);
+
+export const CreateProfileOnboarding = Rpc.make("CreateProfileOnboarding", {
+	success: Schema.Void,
+	error: Schema.Unknown,
+	payload: Schema.Struct({
+		first_name: Schema.String.pipe(Schema.minLength(1)),
+		last_name: Schema.String.pipe(Schema.minLength(1)),
+		avatar_url: Schema.optionalWith(FileFromSelf, { exact: true }),
+	}),
+}).middleware(AuthenticatedUser);
+
+export class ProfileRpcs extends RpcGroup.make(
+	GetAllProfiles,
+	GetProfileById,
+	GetCurrentProfile,
+	CreateProfile,
+	UpdateProfile,
+	DeleteProfile,
+	CreateProfileOnboarding,
+).middleware(RateLimiterTag) {}
